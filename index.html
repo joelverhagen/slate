@@ -1,0 +1,462 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Unofficial NuGet HTTP Protocol Reference</title>
+
+    <style>
+      .highlight table td { padding: 5px; }
+.highlight table pre { margin: 0; }
+.highlight, .highlight .w {
+  color: #f8f8f2;
+  background-color: #272822;
+}
+.highlight .err {
+  color: #272822;
+  background-color: #f92672;
+}
+.highlight .c, .highlight .cd, .highlight .cm, .highlight .c1, .highlight .cs {
+  color: #75715e;
+}
+.highlight .cp {
+  color: #f4bf75;
+}
+.highlight .nt {
+  color: #f4bf75;
+}
+.highlight .o, .highlight .ow {
+  color: #f8f8f2;
+}
+.highlight .p, .highlight .pi {
+  color: #f8f8f2;
+}
+.highlight .gi {
+  color: #a6e22e;
+}
+.highlight .gd {
+  color: #f92672;
+}
+.highlight .gh {
+  color: #66d9ef;
+  background-color: #272822;
+  font-weight: bold;
+}
+.highlight .k, .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kv {
+  color: #ae81ff;
+}
+.highlight .kc {
+  color: #fd971f;
+}
+.highlight .kt {
+  color: #fd971f;
+}
+.highlight .kd {
+  color: #fd971f;
+}
+.highlight .s, .highlight .sb, .highlight .sc, .highlight .sd, .highlight .s2, .highlight .sh, .highlight .sx, .highlight .s1 {
+  color: #a6e22e;
+}
+.highlight .sr {
+  color: #a1efe4;
+}
+.highlight .si {
+  color: #cc6633;
+}
+.highlight .se {
+  color: #cc6633;
+}
+.highlight .nn {
+  color: #f4bf75;
+}
+.highlight .nc {
+  color: #f4bf75;
+}
+.highlight .no {
+  color: #f4bf75;
+}
+.highlight .na {
+  color: #66d9ef;
+}
+.highlight .m, .highlight .mf, .highlight .mh, .highlight .mi, .highlight .il, .highlight .mo, .highlight .mb, .highlight .mx {
+  color: #a6e22e;
+}
+.highlight .ss {
+  color: #a6e22e;
+}
+    </style>
+    <link href="stylesheets/screen.css" rel="stylesheet" media="screen" />
+    <link href="stylesheets/print.css" rel="stylesheet" media="print" />
+      <script src="javascripts/all.js"></script>
+  </head>
+
+  <body class="index" data-languages="[&quot;http&quot;,&quot;powershell&quot;]">
+    <a href="#" id="nav-button">
+      <span>
+        NAV
+        <img src="images/navbar.png" alt="Navbar" />
+      </span>
+    </a>
+    <div class="tocify-wrapper">
+      <img src="images/logo.png" alt="Logo" />
+        <div class="lang-selector">
+              <a href="#" data-language-name="http">http</a>
+              <a href="#" data-language-name="powershell">powershell</a>
+        </div>
+        <div class="search">
+          <input type="text" class="search" id="input-search" placeholder="Search">
+        </div>
+        <ul class="search-results"></ul>
+      <div id="toc">
+      </div>
+        <ul class="toc-footer">
+            <li>Lovingly authored by <a href='https://joelverhagen.com/'>Joel Verhagen</a></li>
+            <li><a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a></li>
+        </ul>
+    </div>
+    <div class="page-wrapper">
+      <div class="dark-box"></div>
+      <div class="content">
+        
+          <h1 id="introduction">Introduction</h1>
+
+<p>This is unofficial documentation for both the web services that support NuGet V2 and V3 HTTP package source protocol.
+A package source is either V2 or V3. V1 package sources are not covered here.</p>
+
+<p>Historically, the NuGet HTTP protocol has not been document and has been an implementation detail of the official NuGet
+client (nuget.exe and NuGet inside of Visual Studio). As time went on, the HTTP protocol was closely inspected by
+parties outside of Microsoft to provide alternative package sources to NuGet.org and third-party clients.</p>
+
+<p>Because the protocol was never clearly documented, there are often subtle quirks between different server
+implementations and even different versions of the official client (nuget.exe).</p>
+
+<p>This documentation is an attempt to clarify all of the HTTP endpoints currently available on major NuGet package
+sources.</p>
+
+<h1 id="disclaimer">Disclaimer</h1>
+
+<p>This is unofficial documentation and is still a work in progres. Although I am on the NuGet team, I am by no means the
+owner of the NuGet protocol. This document is meant for informational purposes and should not be seen at the protocol
+specification.</p>
+
+<h1 id="quirks">Quirks</h1>
+
+<p>Since the NuGet HTTP protocol was never documented in detail, it&rsquo;s not always useful to make unqualified, firm
+statements in this documentation. For this reason, there will yellow notices when quirks or differences between server or
+client implementations should be noted. For example:</p>
+
+<aside>The NuGet HTTP protocol has its warts, but it&rsquo;s essential for building awesome NuGet-y tools!</aside>
+
+<p>Where possible, any different behavior between client or server implementation will be enumerated and explained.</p>
+
+<h1 id="terminology">Terminology</h1>
+
+<p>A <strong>NuGet package</strong> is an archive containing some metadata and some assets. Typically these assets are .NET assemblies
+that another .NET project can consume. However, there are packages used for other things including but certainly not
+limited to:</p>
+
+<ul>
+<li>native dependencies (e.g. <a href="https://www.nuget.org/packages/SQLite/">SQLite</a>)</li>
+<li>JavaScript (e.g. <a href="https://www.nuget.org/packages/jQuery/">jQuery</a>)</li>
+<li>CSS (e.g. <a href="https://www.nuget.org/packages/bootstrap/">Bootstrap</a>)</li>
+<li>Windows applications (e.g. <a href="https://chocolatey.org/packages/Firefox">Firefox</a>, via Chocolatey)</li>
+<li>deployment packages (via <a href="https://octopus.com/docs/packaging-applications">Octopus Deploy</a>)</li>
+<li>And certainly many other creative things!</li>
+</ul>
+
+<p>However, NuGet packages have these attributes in common:</p>
+
+<ul>
+<li>Having the .nupkg file extension</li>
+<li>Being a Zip archive in disguise</li>
+<li>Containing a .nuspec in the root of the archive</li>
+<li>Having an ID</li>
+<li>Having a version number</li>
+</ul>
+
+<p>The <strong>package ID</strong> is a human-readable string that package consumers configure into their projects or tooling so that
+the package can be fetched from their packages sources. The package ID is a case-insensitive string, although there are
+some quirks when it comes to casing.</p>
+
+<p>The <strong>package version</strong> is SemVer 1.0.0 version string (although SemVer 2.0.0 support is coming). As a package changes
+over time, the package version is changes to reflect this but the package ID stays the same.</p>
+
+<p>The <strong>identity of a package</strong> is the pair of package ID and package version. This pair is meant to unambiguously allow
+a package to be retrieved from a package source.</p>
+
+<p>A <strong>package source</strong> is a collection of HTTP endpoints that allow a NuGet client to discovery, download, and find
+metadata about NuGet packages. Each package source has a root URL that is configured into the client.</p>
+
+<p>There are two package source protocols covered here.</p>
+
+<p>The <strong>V3 protocol</strong> is the latest version of the package source protocol. Its data responses are serialized using JSON
+and has a built in mechanism for versioning of existing endpoints and addition of new endpoints. A V3 package source URL
+must end in <code class="prettyprint">index.json</code>.</p>
+
+<p>The <strong>V2 protocol</strong> is more widely supported by third party server implementations. Its data responses are serialized
+using XML. It looks a lot like an OData Version 2.0 feed but there are quirks and limitations on a V2 package source
+that are typically not there on an OData endpoint.</p>
+
+<p>The <strong>V1 protocol</strong> is not covered in this document.</p>
+
+          <h1 id="authentication">Authentication</h1>
+
+<h2 id="roles">Roles</h2>
+
+<p>There are typically two different roles when interacting with a package source:</p>
+
+<ul>
+<li><strong>reader</strong>: able to discover and download packages.</li>
+<li><strong>writer</strong>: able to upload and delete packages.</li>
+</ul>
+
+<p>Some server implementations give the writer role access to all packages on the source. Other implementations only give
+access to the package IDs which were originally uploaded by that author.</p>
+
+<aside>
+How users with these different roles are authenticated varies from one package source implementation to the next.
+</aside>
+
+<h2 id="nuget-org-nuget-server-myget">NuGet.org, NuGet.Server, MyGet</h2>
+
+<p>The <strong>reader</strong> role is assigned to anonymous users. A caller can download any package from NuGet.org without providing
+any form of credentials.</p>
+
+<p>The <strong>writer</strong> role authentication and authorization is achieved using the <code class="prettyprint">X-NuGet-ApiKey</code> HTTP header.</p>
+
+<h2 id="visual-studio-team-services-vsts">Visual Studio Team Services (VSTS)</h2>
+
+<p>Authentication to VSTS is typically done using personal access tokens (PAT).</p>
+
+<p>The <strong>reader</strong> role is assigned to users with read access to the package feed and who are using a PAT that has the
+&ldquo;Packaging (read)&rdquo;, &ldquo;Packaging (read and write)&rdquo; or &ldquo;Packaging (read, write, and manage)&rdquo; scope.</p>
+
+<p>The <strong>writer</strong> role is assigned to users with write access to the package feed and who are using a PAT that has the
+&ldquo;Packaging (read and write)&rdquo; or &ldquo;Packaging (read, write, and manage)&rdquo; scope.</p>
+
+<p>The <code class="prettyprint">X-NuGet-ApiKey</code> is required by the protocol but is ignored by VSTS since all authentication and authorization
+information is contained in the PAT.</p>
+
+          <h1 id="v2-protocol">V2 Protocol</h1>
+
+<h2 id="package-push">Package Push</h2>
+<pre class="highlight http"><code><span class="nf">POST</span> <span class="nn">/nuget</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="p">:</span> <span class="s">example.com</span>
+<span class="na">X-NuGet-ApiKey</span><span class="p">:</span> <span class="s">meowmeow</span>
+<span class="na">Content-Length</span><span class="p">:</span> <span class="s">35195</span>
+
+(bytes of the .nupkg)
+</code></pre><pre class="highlight powershell"><code>Invoke-WebRequest <span class="sb">`</span>
+  -Method PUT <span class="sb">`</span>
+  -Uri http://example.com/nuget/ <span class="sb">`</span>
+  -InFile Kittens.1.2.0-beta.nupkg <span class="sb">`</span>
+  -Headers @<span class="o">{</span> <span class="s2">"X-NuGet-ApiKey"</span> <span class="o">=</span> <span class="s2">"meowmeow"</span> <span class="o">}</span>
+</code></pre>
+<blockquote>
+<p>The above command returns a response like this:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>HTTP/1.1 201 Created
+Content-Length: 0
+Date: Sat, 18 Feb 2017 17:04:18 GMT
+</code></pre>
+<p>This endpoint is used to add new packages and replace existing packages. The identity (package ID and version) of the
+package being pushed is defined in the .nuspec of uploaded package.</p>
+
+<aside>Some server implementations do not allow existing packages to be replaced.</aside>
+
+<table><thead>
+<tr>
+<th>Server</th>
+<th>Supports package replace</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>NuGet.org</td>
+<td>no</td>
+</tr>
+<tr>
+<td>NuGet.Server</td>
+<td>no, unless <code class="prettyprint">allowOverrideExistingPackageOnPush</code> is set to <code class="prettyprint">true</code></td>
+</tr>
+<tr>
+<td>MyGet</td>
+<td>yes, unless &ldquo;Forbid overwriting of existing packages?&rdquo; package setting is enabled</td>
+</tr>
+<tr>
+<td>VSTS</td>
+<td>no</td>
+</tr>
+</tbody></table>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">PUT http://example.com/nuget</code></p>
+
+<aside>NuGet.org accepts <code>POST</code> requests in addition to <code>PUT</code>.</aside>
+
+<h3 id="headers">Headers</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>X-NuGet-ApiKey</td>
+<td>true</td>
+<td>The API key used to authenticate the caller.</td>
+</tr>
+</tbody></table>
+
+<h3 id="request-body">Request Body</h3>
+
+<p>The request body can come in one of two forms.</p>
+
+<h4 id="multipart-form-data">Multipart Form Data</h4>
+
+<p>The request header <code class="prettyprint">Content-Type</code> is <code class="prettyprint">multipart/form-data</code> and the first item in the response body is the raw bytes of
+the .nupkg being pushed. Subsequent items in the multipart body are ignored.</p>
+
+<h4 id="raw-bytes">Raw Bytes</h4>
+
+<p>If the response body is not <code class="prettyprint">multipart/form-data</code>, the entire request body is assumed to be the raw bytes of the .nupkg
+being pushed.</p>
+
+<h3 id="response">Response</h3>
+
+<aside>There is some inconsistency in the error status codes returned from different server implementations.</aside>
+
+<table><thead>
+<tr>
+<th>Status Code</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>201 Created</td>
+<td>The package has been successfully uploaded</td>
+</tr>
+<tr>
+<td>400 Bad Request</td>
+<td>The package in the request body could not be extracted or has invalid metadata</td>
+</tr>
+<tr>
+<td>401 Unauthorized</td>
+<td>The provided API key or credentials are not valid</td>
+</tr>
+<tr>
+<td>403 Forbidden</td>
+<td>The provided API key or credentials does not have write access to the provided package ID</td>
+</tr>
+<tr>
+<td>409 Conflict</td>
+<td>A package with the provided identity already exists</td>
+</tr>
+</tbody></table>
+
+<p><strong>TODO:</strong> document which server implementations return what status codes.</p>
+
+<p>The official NuGet client treats all 200-level responses as success and everything else as a failure.</p>
+
+<h2 id="package-delete">Package Delete</h2>
+<pre class="highlight http"><code><span class="nf">DELETE</span> <span class="nn">/nuget/Kittens/1.2.0-beta</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="p">:</span> <span class="s">example.com</span>
+<span class="na">X-NuGet-ApiKey</span><span class="p">:</span> <span class="s">meowmeow</span>
+</code></pre><pre class="highlight powershell"><code>Invoke-WebRequest <span class="sb">`</span>
+  -Method DELETE <span class="sb">`</span>
+  -Uri http://example.com/nuget/Kittens/1.2.0-beta <span class="sb">`</span>
+  -Headers @<span class="o">{</span> <span class="s2">"X-NuGet-ApiKey"</span> <span class="o">=</span> <span class="s2">"meowmeow"</span> <span class="o">}</span>
+</code></pre>
+<blockquote>
+<p>The above command returns a response like this:</p>
+</blockquote>
+<pre class="highlight plaintext"><code>HTTP/1.1 204 No Content
+Content-Length: 0
+Date: Sat, 18 Feb 2017 17:04:18 GMT
+</code></pre>
+<p>This endpoint is used to delete an existing package. Server implementations are allowed to implement the delete
+operation either as complete package removal or as the unlist operation.</p>
+
+<table><thead>
+<tr>
+<th>Server</th>
+<th>Delete or unlist</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>NuGet.org</td>
+<td>unlist</td>
+</tr>
+<tr>
+<td>NuGet.Server</td>
+<td>delete, unless <code class="prettyprint">enableDelisting</code> is set to <code class="prettyprint">true</code></td>
+</tr>
+</tbody></table>
+
+<p><strong>TODO:</strong> document MyGet and VSTS</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">DELETE http://example.com/nuget/{package ID}/{package version}</code></p>
+
+<h3 id="headers">Headers</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>X-NuGet-ApiKey</td>
+<td>true</td>
+<td>The API key used to authenticate the caller.</td>
+</tr>
+</tbody></table>
+
+<h3 id="response">Response</h3>
+
+<aside>There is some inconsistency in the error status codes returned from different server implementations.</aside>
+
+<table><thead>
+<tr>
+<th>Status Code</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>204 No Content</td>
+<td>The package was successfully deleted or unlisted</td>
+</tr>
+<tr>
+<td>404 Bad Request</td>
+<td>The provided package identity does not exist</td>
+</tr>
+<tr>
+<td>401 Unauthorized</td>
+<td>The provided API key or credentials are not valid</td>
+</tr>
+<tr>
+<td>403 Forbidden</td>
+<td>The provided API key or credentials does not have write access to the provided package ID</td>
+</tr>
+</tbody></table>
+
+<p><strong>TODO:</strong> document which server implementations return what status codes.</p>
+
+<p>The official NuGet client treats all 200-level responses as success and everything else as a failure.</p>
+
+      </div>
+      <div class="dark-box">
+          <div class="lang-selector">
+                <a href="#" data-language-name="http">http</a>
+                <a href="#" data-language-name="powershell">powershell</a>
+          </div>
+      </div>
+    </div>
+  </body>
+</html>
