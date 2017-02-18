@@ -27,7 +27,15 @@ client implementations should be noted. For example:
 
 <aside>The NuGet HTTP protocol has its warts, but it's essential for building awesome NuGet-y tools!</aside>
 
-Where possible, any different behavior between client or server implementation will be enumerated and explained.
+Where possible, any different behavior between client or server implementation will be enumerated and explained. To make
+the explanation of different implementations more terse, the following abbreviations will be used:
+
+Abbreviation | Implementation                    | Server or client
+------------ | --------------------------------- | ----------------
+MY           | MyGet                             | Server
+NS           | NuGet.Server                      | Server
+NU           | NuGet.org (NuGetGallery)          | Server
+VS           | Visual Studio Team Service (VSTS) | Server
 
 # Terminology
 
