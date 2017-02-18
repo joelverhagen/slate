@@ -2,13 +2,10 @@
 title: API Reference
 
 language_tabs:
-  - shell
-  - ruby
-  - python
-  - javascript
+  - powershell
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
+  - Lovingly authored by <a href='https://joelverhagen.com/'>Joel Verhagen</a>
   - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
 
 includes:
@@ -19,51 +16,80 @@ search: true
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+This is unofficial documentation for both the web services that support NuGet V2 and V3 HTTP package source protocol.
+A package source is either V2 or V3. V1 package sources are not covered here.
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+Historically, the NuGet HTTP protocol has not been document and has been an implementation detail of the official NuGet
+client (nuget.exe and NuGet inside of Visual Studio). As time went on, the HTTP protocol was closely inspected by
+parties outside of Microsoft to provide alternative package sources to NuGet.org and third-party clients.
 
-This example API documentation page was created with [Slate](https://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
+Because the protocol was never clearly documented, there are often subtle quirks between different server
+implementations and even different versions of the official client (nuget.exe).
 
-# Authentication
+This documentation is an attempt to clarify all of the HTTP endpoints currently available on major NuGet package
+sources.
 
-> To authorize, use this code:
+# Disclaimer
 
-```ruby
-require 'kittn'
+This is unofficial documentation and is still a work in progres. Although I am on the NuGet team, I am by no means the
+owner of the NuGet protocol. This document is meant for informational purposes and should not be seen at the protocol
+specification.
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
+# Quirks
 
-```python
-import kittn
+Since the NuGet HTTP protocol was never documented in detail, it's not always useful to make unqualified, firm
+statements in this documentation. For this reason, there will yellow notices when quirks or differences between server or
+client implementations should be noted. For example:
 
-api = kittn.authorize('meowmeowmeow')
-```
+<aside>The NuGet HTTP protocol has its warts, but it's essential for building awesome NuGet-y tools!</aside>
 
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
-```
+Where possible, any different behavior between client or server implementation will be enumerated and explained.
 
-```javascript
-const kittn = require('kittn');
+# Terminology
 
-let api = kittn.authorize('meowmeowmeow');
-```
+A **NuGet package** is an archive containing some metadata and some assets. Typically these assets are .NET assemblies
+that another .NET project can consume. However, there are packages used for other things including but certainly not
+limited to:
 
-> Make sure to replace `meowmeowmeow` with your API key.
+- native dependencies (e.g. [SQLite](https://www.nuget.org/packages/SQLite/))
+- JavaScript (e.g. [jQuery](https://www.nuget.org/packages/jQuery/))
+- CSS (e.g. [Bootstrap](https://www.nuget.org/packages/bootstrap/))
+- Windows applications (e.g. [Firefox](https://chocolatey.org/packages/Firefox), via Chocolatey)
+- deployment packages (via [Octopus Deploy](https://octopus.com/docs/packaging-applications))
+- And certainly many other creative things!
 
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
+However, NuGet packages have these attributes in common:
 
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
+- Having the `.nupkg` file extension
+- Being a Zip archive in disguise
+- Containing a .nuspec in the root of the archive
+- Having an ID
+- Having a version number
 
-`Authorization: meowmeowmeow`
+The **package ID** is a human-readable string that package consumers configure into their projects or tooling so that
+the package can be fetched from their packages sources. The package ID is a case-insensitive string, although there are
+some quirks when it comes to casing.
 
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
-</aside>
+The **package version** is SemVer 1.0.0 version string (although SemVer 2.0.0 support is coming). As a package changes
+over time, the package version is changes to reflect this but the package ID stays the same.
+
+The **identity of a package** is the pair of package ID and package version. This pair is meant to unambiguously allow
+a package to be retrieved from a package source.
+
+A **package source** is a collection of HTTP endpoints that allow a NuGet client to discovery, download, and find
+metadata about NuGet packages. Each package source has a root URL that is configured into the client.
+
+There are two package source protocols covered here.
+
+The **V3 protocol** is the latest version of the package source protocol. Its data responses are serialized using JSON
+and has a built in mechanism for versioning of existing endpoints and addition of new endpoints. A V3 package source URL
+must end in `index.json`.
+
+The **V2 protocol** is more widely supported by third party server implementations. Its data responses are serialized
+using XML. It looks a lot like an OData Version 2.0 feed but there are quirks and limitations on a V2 package source
+that are typically not there on an OData endpoint.
+
+The **V1 protocol** is not covered in this document.
 
 # Kittens
 
