@@ -151,32 +151,33 @@ client implementations should be noted. For example:</p>
 <p>Where possible, any different behavior between client or server implementation will be enumerated and explained. To make
 the explanation of different implementations more terse, the following abbreviations will be used:</p>
 
+<h2 id="quirk-abbreviations">Quirk Abbreviations</h2>
+
 <table><thead>
 <tr>
 <th>Abbreviation</th>
 <th>Implementation</th>
-<th>Server or client</th>
 </tr>
 </thead><tbody>
 <tr>
 <td>MY</td>
-<td>MyGet</td>
-<td>Server</td>
+<td><a href="https://www.myget.org/">MyGet</a></td>
 </tr>
 <tr>
-<td>NS</td>
-<td>NuGet.Server</td>
-<td>Server</td>
+<td>NG</td>
+<td><a href="https://github.com/NuGet/NuGetGallery">NuGetGallery</a> (NuGet.org)</td>
 </tr>
 <tr>
-<td>NU</td>
-<td>NuGet.org (NuGetGallery)</td>
-<td>Server</td>
+<td>NS2</td>
+<td><a href="https://github.com/NuGet/NuGet.Server/tree/master">NuGet.Server on WCF</a></td>
+</tr>
+<tr>
+<td>NS3</td>
+<td><a href="https://github.com/NuGet/NuGet.Server/tree/dev">NuGet.Server on Web API</a></td>
 </tr>
 <tr>
 <td>VS</td>
-<td>Visual Studio Team Service (VSTS)</td>
-<td>Server</td>
+<td><a href="https://www.visualstudio.com/en-us/docs/integrate/api/packaging/overview">Visual Studio Team Services (VSTS)</a></td>
 </tr>
 </tbody></table>
 
@@ -210,7 +211,9 @@ the package can be fetched from their packages sources. The package ID is a case
 some quirks when it comes to casing.</p>
 
 <p>The <strong>package version</strong> is SemVer 1.0.0 version string (although SemVer 2.0.0 support is coming). As a package changes
-over time, the package version is changes to reflect this but the package ID stays the same.</p>
+over time, the package version is changes to reflect this but the package ID stays the same. Equivalency of two version
+strings in general is defined by the SemVer specification. However, NuGet package versions can have a fourth integer in
+the version number (to align with <code class="prettyprint">System.Version</code>) and comparison is done in a <strong>case-insensitive</strong> manner.</p>
 
 <p>The <strong>identity of a package</strong> is the pair of package ID and package version. This pair is meant to unambiguously allow
 a package to be retrieved from a package source.</p>
@@ -270,7 +273,7 @@ information is contained in the PAT.</p>
 
           <h1 id="v2-protocol">V2 Protocol</h1>
 
-<h2 id="package-entity">Package entity</h2>
+          <h2 id="package-entity">Package entity</h2>
 
 <p>At the core of the V2 protocol is the OData package entity. A single package entity is represented by a <code class="prettyprint">&lt;entry&gt;</code>
 element. A collection of package entities is represented by a <code class="prettyprint">&lt;feed&gt;</code> element with zero or more <code class="prettyprint">&lt;entry&gt;</code> child
@@ -279,201 +282,285 @@ elements. </p>
 <p>The identity (i.e. key) of the package entity is the Id and Version properties.</p>
 
 <aside>
-The set of properties available varies between the server implementations.
+The set of properties available and where the values are defined varies between the server implementations.
 </aside>
 
-<p>The following properties are available on the package entity. The types are <a href="http://www.odata.org/documentation/odata-version-2-0/overview/#AbstractTypeSystem">OData primitive data types</a>.</p>
+<h3 id="properties-from-lt-entry-gt">Properties from <code class="prettyprint">&lt;entry&gt;</code></h3>
+
+<p>The following elements are available on every known server implementation.</p>
 
 <table><thead>
 <tr>
-<th>Name</th>
-<th>Type</th>
-<th>Availability</th>
+<th>Element</th>
+<th>Description</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>Authors</td>
-<td>Edm.String</td>
-<td>MY, NS, NU, VS</td>
+<td><code class="prettyprint">&lt;id&gt;</code>, text content</td>
+<td>URL to <a href="#endpoint-get-a-single-package">get metadata about a single package</a></td>
 </tr>
 <tr>
-<td>Copyright</td>
-<td>Edm.String</td>
-<td>MY, NS, NU, VS</td>
+<td><code class="prettyprint">&lt;content&gt;</code>, <code class="prettyprint">src</code> attribute</td>
+<td>URL to download the .nupkg</td>
 </tr>
 <tr>
-<td>Created</td>
-<td>Edm.DateTime</td>
-<td>MY, NU, VS</td>
+<td><code class="prettyprint">&lt;summary&gt;</code>, text content</td>
+<td>Summary <strong>only when Summary is defined</strong></td>
 </tr>
 <tr>
-<td>Dependencies</td>
-<td>Edm.String</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>Description</td>
-<td>Edm.String</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>DevelopmentDependency</td>
-<td>Edm.Boolean</td>
-<td>NS</td>
-</tr>
-<tr>
-<td>DownloadCount</td>
-<td>Edm.Int32</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>GalleryDetailsUrl</td>
-<td>Edm.String</td>
-<td>MY, NU</td>
-</tr>
-<tr>
-<td>IconUrl</td>
-<td>Edm.String</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>Id</td>
-<td>Edm.String</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>IsAbsoluteLatestVersion</td>
-<td>Edm.Boolean</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>IsLatestVersion</td>
-<td>Edm.Boolean</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>IsPrerelease</td>
-<td>Edm.Boolean</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>Language</td>
-<td>Edm.String</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>LastEdited</td>
-<td>Edm.DateTime</td>
-<td>MY, NU, VS</td>
-</tr>
-<tr>
-<td>LastUpdated</td>
-<td>Edm.DateTime</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>LicenseNames</td>
-<td>Edm.String</td>
-<td>MY, NU</td>
-</tr>
-<tr>
-<td>LicenseReportUrl</td>
-<td>Edm.String</td>
-<td>MY, NU</td>
-</tr>
-<tr>
-<td>LicenseUrl</td>
-<td>Edm.String</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>Listed</td>
-<td>Edm.Boolean</td>
-<td>NS, VS</td>
-</tr>
-<tr>
-<td>MinClientVersion</td>
-<td>Edm.String</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>NormalizedVersion</td>
-<td>Edm.String</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>Owners</td>
-<td>Edm.String</td>
-<td>NS</td>
-</tr>
-<tr>
-<td>PackageHash</td>
-<td>Edm.String</td>
-<td>MY, NS, NU</td>
-</tr>
-<tr>
-<td>PackageHashAlgorithm</td>
-<td>Edm.String</td>
-<td>MY, NS, NU</td>
-</tr>
-<tr>
-<td>PackageSize</td>
-<td>Edm.Int64</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>ProjectUrl</td>
-<td>Edm.String</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>Published</td>
-<td>Edm.DateTime</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>ReleaseNotes</td>
-<td>Edm.String</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>ReportAbuseUrl</td>
-<td>Edm.String</td>
-<td>MY, NU</td>
-</tr>
-<tr>
-<td>RequireLicenseAcceptance</td>
-<td>Edm.Boolean</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>Summary</td>
-<td>Edm.String</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>Tags</td>
-<td>Edm.String</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>Title</td>
-<td>Edm.String</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>Version</td>
-<td>Edm.String</td>
-<td>MY, NS, NU, VS</td>
-</tr>
-<tr>
-<td>VersionDownloadCount</td>
-<td>Edm.Int32</td>
-<td>MY, NS, NU</td>
+<td><code class="prettyprint">&lt;author&gt;</code>, <code class="prettyprint">&lt;name&gt;</code> children</td>
+<td>Authors, split into multiple values</td>
 </tr>
 </tbody></table>
 
-<h2 id="endpoint-push">Endpoint: Push</h2>
+<p>The following properties vary from one server implementation to the next.</p>
+
+<table><thead>
+<tr>
+<th>Element</th>
+<th>Description</th>
+<th><a href="#quirk-abbreviations">Availability</a></th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code class="prettyprint">&lt;title&gt;</code> as the ID, text content</td>
+<td>ID of the package</td>
+<td>NG, NS2, NS3, VS</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;title&gt;</code> as the Title, text content</td>
+<td>Title of the package</td>
+<td>MY</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;summmay&gt;</code> defaulting to Description</td>
+<td><strong>Only when Summary is not defined</strong></td>
+<td>MY</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;summary&gt;</code> with no text content</td>
+<td><strong>Only when Summary is not defined</strong></td>
+<td>NS2</td>
+</tr>
+<tr>
+<td>No <code class="prettyprint">&lt;summary&gt;</code> element at all</td>
+<td><strong>Only when Summary is not defined</strong></td>
+<td>NG, NS3, VS</td>
+</tr>
+</tbody></table>
+
+<h3 id="properties-from-lt-m-properties-gt">Properties from <code class="prettyprint">&lt;m:properties&gt;</code></h3>
+
+<p>These values are available under the <code class="prettyprint">&lt;m:properties&gt;</code> element (a direct child of the <code class="prettyprint">&lt;entry&gt;</code> element).
+The types are <a href="http://www.odata.org/documentation/odata-version-2-0/overview/#AbstractTypeSystem">OData primitive data types</a>.</p>
+
+<p>The following elements are available on every known server implementation. </p>
+
+<table><thead>
+<tr>
+<th>Element</th>
+<th>Type</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code class="prettyprint">&lt;d:Copyright&gt;</code></td>
+<td>Edm.String</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:Dependencies&gt;</code></td>
+<td>Edm.String</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:Description&gt;</code></td>
+<td>Edm.String</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:DownloadCount&gt;</code></td>
+<td>Edm.Int32</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:IconUrl&gt;</code></td>
+<td>Edm.String</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:IsAbsoluteLatestVersion&gt;</code></td>
+<td>Edm.Boolean</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:IsLatestVersion&gt;</code></td>
+<td>Edm.Boolean</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:IsPrerelease&gt;</code></td>
+<td>Edm.Boolean</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:Language&gt;</code></td>
+<td>Edm.String</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:LicenseUrl&gt;</code></td>
+<td>Edm.String</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:MinClientVersion&gt;</code></td>
+<td>Edm.String</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:NormalizedVersion&gt;</code></td>
+<td>Edm.String</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:PackageSize&gt;</code></td>
+<td>Edm.Int64</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:ProjectUrl&gt;</code></td>
+<td>Edm.String</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:ReleaseNotes&gt;</code></td>
+<td>Edm.String</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:RequireLicenseAcceptance&gt;</code></td>
+<td>Edm.Boolean</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:Tags&gt;</code></td>
+<td>Edm.String</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:Title&gt;</code></td>
+<td>Edm.String</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:Version&gt;</code></td>
+<td>Edm.String</td>
+</tr>
+</tbody></table>
+
+<p>The following properties vary from one server implementation to the next.</p>
+
+<table><thead>
+<tr>
+<th>Element</th>
+<th>Type</th>
+<th><a href="#quirk-abbreviations">Availability</a></th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code class="prettyprint">&lt;d:Authors&gt;</code></td>
+<td>Edm.String</td>
+<td>NG NS3 VS</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:Created&gt;</code></td>
+<td>Edm.DateTime</td>
+<td>MY NG VS</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:DevelopmentDependency&gt;</code></td>
+<td>Edm.Boolean</td>
+<td>NS2 NS3</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:GalleryDetailsUrl&gt;</code></td>
+<td>Edm.String</td>
+<td>MY NG</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:Id&gt;</code></td>
+<td>Edm.String</td>
+<td>MY NG NS3 VS</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:LastEdited&gt;</code></td>
+<td>Edm.DateTime</td>
+<td>MY NG VS</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:LastUpdated&gt;</code></td>
+<td>Edm.DateTime</td>
+<td>NG NS3 VS</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:LicenseNames&gt;</code></td>
+<td>Edm.String</td>
+<td>MY NG</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:LicenseReportUrl&gt;</code></td>
+<td>Edm.String</td>
+<td>MY NG</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:Listed&gt;</code></td>
+<td>Edm.Boolean</td>
+<td>NS2 NS3 VS</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:Owners&gt;</code></td>
+<td>Edm.String</td>
+<td>NS2 NS3</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:PackageHash&gt;</code></td>
+<td>Edm.String</td>
+<td>MY NG NS2 NS3</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:PackageHashAlgorithm&gt;</code></td>
+<td>Edm.String</td>
+<td>MY NG NS2 NS3</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:Published&gt;</code></td>
+<td>Edm.DateTime</td>
+<td>MY NG NS3 VS</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:ReportAbuseUrl&gt;</code></td>
+<td>Edm.String</td>
+<td>MY NG</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:Summary&gt;</code></td>
+<td>Edm.String</td>
+<td>NG NS2 NS3 VS</td>
+</tr>
+<tr>
+<td><code class="prettyprint">&lt;d:VersionDownloadCount&gt;</code></td>
+<td>Edm.Int32</td>
+<td>MY NG NS2 NS3</td>
+</tr>
+</tbody></table>
+
+<h3 id="client-recommendations">Client recommendations</h3>
+
+<h4 id="downloading-nupkgs">Downloading .nupkgs</h4>
+
+<p>Tthe <code class="prettyprint">src</code> attribute of the <code class="prettyprint">&lt;content&gt;</code> element (a direct child element within the <code class="prettyprint">&lt;entry&gt;</code>) is the URL to where the
+package (.nupkg file) can be downloaded. This download URL has no specific pattern. Clients should discover .nupkg URLs
+by inspecting the XML <code class="prettyprint">&lt;content&gt;</code> element for the desired package and should not depend on the URLs having a particular
+structure.</p>
+
+<h4 id="determining-the-package-id">Determining the package ID</h4>
+
+<p>Unfortunately, NuGet.Server on WCF (and perhaps other server implementations) do not include the ID in the
+<code class="prettyprint">&lt;m:properties&gt;</code> element. All other server implementations do. To work around this, use the following algorithm to
+determine a package&rsquo;s ID.</p>
+
+<ol>
+<li>Check for the <code class="prettyprint">&lt;d:Id&gt;</code> element under <code class="prettyprint">&lt;d:properties&gt;</code>.</li>
+<li>If it exists, use the text content found there.</li>
+<li>If it does not exist, use the text content found under the <code class="prettyprint">&lt;title&gt;</code> element (found under the <code class="prettyprint">&lt;entry&gt;</code> element).</li>
+</ol>
+
+<p>It may be tempting to parse the ID out of the URL found in the <code class="prettyprint">&lt;id&gt;</code> element. However, this is not guaranteed to have
+SemVer 2.0.0 build metadata.</p>
+
+          <h2 id="endpoint-push">Endpoint: Push</h2>
 <pre class="highlight http"><code><span class="nf">POST</span> <span class="nn">/nuget</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Host</span><span class="p">:</span> <span class="s">example.com</span>
 <span class="na">X-NuGet-ApiKey</span><span class="p">:</span> <span class="s">meowmeow</span>
@@ -505,7 +592,7 @@ package being pushed is defined in the .nuspec of uploaded package.</p>
 </tr>
 </thead><tbody>
 <tr>
-<td>NuGet.org</td>
+<td>NuGetGallery</td>
 <td>no</td>
 </tr>
 <tr>
@@ -526,7 +613,7 @@ package being pushed is defined in the .nuspec of uploaded package.</p>
 
 <p><code class="prettyprint">PUT http://example.com/nuget</code></p>
 
-<aside>NuGet.org accepts <code>POST</code> requests in addition to <code>PUT</code>.</aside>
+<aside>NuGetGallery accepts <code>POST</code> requests in addition to <code>PUT</code>.</aside>
 
 <h3 id="headers">Headers</h3>
 
@@ -594,7 +681,7 @@ being pushed.</p>
 
 <p>The official NuGet client treats all 200-level responses as success and everything else as a failure.</p>
 
-<h2 id="endpoint-delete">Endpoint: Delete</h2>
+          <h2 id="endpoint-delete">Endpoint: Delete</h2>
 <pre class="highlight http"><code><span class="nf">DELETE</span> <span class="nn">/nuget/Kittens/1.2.0-beta</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Host</span><span class="p">:</span> <span class="s">example.com</span>
 <span class="na">X-NuGet-ApiKey</span><span class="p">:</span> <span class="s">meowmeow</span>
@@ -620,7 +707,7 @@ operation either as complete package removal or as the unlist operation.</p>
 </tr>
 </thead><tbody>
 <tr>
-<td>NuGet.org</td>
+<td>NuGetGallery</td>
 <td>unlist</td>
 </tr>
 <tr>
@@ -634,6 +721,27 @@ operation either as complete package removal or as the unlist operation.</p>
 <h3 id="http-request">HTTP Request</h3>
 
 <p><code class="prettyprint">DELETE http://example.com/nuget/{package ID}/{package version}</code></p>
+
+<h3 id="url-parameters">URL Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>{package ID}</td>
+<td>true</td>
+<td>The ID of the package to be deleted</td>
+</tr>
+<tr>
+<td>{package version}</td>
+<td>true</td>
+<td>The version of the package to be deleted</td>
+</tr>
+</tbody></table>
 
 <h3 id="headers">Headers</h3>
 
@@ -683,7 +791,7 @@ operation either as complete package removal or as the unlist operation.</p>
 
 <p>The official NuGet client treats all 200-level responses as success and everything else as a failure.</p>
 
-<h2 id="endpoint-packages">Endpoint: Packages</h2>
+          <h2 id="endpoint-enumerate-packages">Endpoint: Enumerate packages</h2>
 <pre class="highlight http"><code><span class="nf">GET</span> <span class="nn">/nuget/Packages()?$filter=IsAbsoluteLatestVersion&amp;$orderby=Id&amp;$skip=4&amp;$top=1</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Host</span><span class="p">:</span> <span class="s">example.com</span>
 </code></pre><pre class="highlight powershell"><code>Invoke-WebRequest <span class="sb">`</span>
@@ -693,7 +801,7 @@ operation either as complete package removal or as the unlist operation.</p>
 <p>The above command returns an XML response like this:</p>
 </blockquote>
 <pre class="highlight xml"><code>HTTP/1.1 200 OK
-Content-Length: 2881
+Content-Length: 2156
 Content-Type: application/atom+xml;type=feed;charset=utf-8
 Date: Sat, 18 Feb 2017 17:04:18 GMT
 
@@ -705,7 +813,7 @@ Date: Sat, 18 Feb 2017 17:04:18 GMT
   <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"self"</span> <span class="na">href=</span><span class="s">"http://example.com/nuget/Packages"</span> <span class="nt">/&gt;</span>
   <span class="nt">&lt;entry&gt;</span>
     <span class="nt">&lt;id&gt;</span>http://example.com/nuget/Packages(Id='Kittens',Version='1.2.0-beta')<span class="nt">&lt;/id&gt;</span>
-    <span class="nt">&lt;category</span> <span class="na">term=</span><span class="s">"NuGetGallery.OData.V2FeedPackage"</span> <span class="na">scheme=</span><span class="s">"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;category</span> <span class="na">term=</span><span class="s">"V2FeedPackage"</span> <span class="na">scheme=</span><span class="s">"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"</span> <span class="nt">/&gt;</span>
     <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"edit"</span> <span class="na">href=</span><span class="s">"http://example.com/nuget/Packages(Id='Kittens',Version='1.2.0-beta')"</span> <span class="nt">/&gt;</span>
     <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"self"</span> <span class="na">href=</span><span class="s">"http://example.com/nuget/Packages(Id='Kittens',Version='1.2.0-beta')"</span> <span class="nt">/&gt;</span>
     <span class="nt">&lt;title</span> <span class="na">type=</span><span class="s">"text"</span><span class="nt">&gt;</span>Kittens<span class="nt">&lt;/title&gt;</span>
@@ -715,37 +823,25 @@ Date: Sat, 18 Feb 2017 17:04:18 GMT
     <span class="nt">&lt;/author&gt;</span>
     <span class="nt">&lt;content</span> <span class="na">type=</span><span class="s">"application/zip"</span> <span class="na">src=</span><span class="s">"http://example.com/nuget/package/Kittens/1.2.0-beta"</span> <span class="nt">/&gt;</span>
     <span class="nt">&lt;m:properties&gt;</span>
-      <span class="nt">&lt;d:Id&gt;</span>Kittens<span class="nt">&lt;/d:Id&gt;</span>
       <span class="nt">&lt;d:Version&gt;</span>1.2.0-beta<span class="nt">&lt;/d:Version&gt;</span>
       <span class="nt">&lt;d:NormalizedVersion&gt;</span>1.2.0-beta<span class="nt">&lt;/d:NormalizedVersion&gt;</span>
-      <span class="nt">&lt;d:Authors&gt;</span>joelverhagen<span class="nt">&lt;/d:Authors&gt;</span>
       <span class="nt">&lt;d:Copyright</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
-      <span class="nt">&lt;d:Created</span> <span class="na">m:type=</span><span class="s">"Edm.DateTime"</span><span class="nt">&gt;</span>2017-02-07T09:28:34.88<span class="nt">&lt;/d:Created&gt;</span>
       <span class="nt">&lt;d:Dependencies</span> <span class="nt">/&gt;</span>
-      <span class="nt">&lt;d:Description&gt;</span>to learn dll<span class="nt">&lt;/d:Description&gt;</span>
+      <span class="nt">&lt;d:Description&gt;</span>Descriptions are important!<span class="nt">&lt;/d:Description&gt;</span>
       <span class="nt">&lt;d:DownloadCount</span> <span class="na">m:type=</span><span class="s">"Edm.Int32"</span><span class="nt">&gt;</span>27<span class="nt">&lt;/d:DownloadCount&gt;</span>
       <span class="nt">&lt;d:IconUrl</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
       <span class="nt">&lt;d:IsLatestVersion</span> <span class="na">m:type=</span><span class="s">"Edm.Boolean"</span><span class="nt">&gt;</span>false<span class="nt">&lt;/d:IsLatestVersion&gt;</span>
       <span class="nt">&lt;d:IsAbsoluteLatestVersion</span> <span class="na">m:type=</span><span class="s">"Edm.Boolean"</span><span class="nt">&gt;</span>true<span class="nt">&lt;/d:IsAbsoluteLatestVersion&gt;</span>
       <span class="nt">&lt;d:IsPrerelease</span> <span class="na">m:type=</span><span class="s">"Edm.Boolean"</span><span class="nt">&gt;</span>false<span class="nt">&lt;/d:IsPrerelease&gt;</span>
       <span class="nt">&lt;d:Language</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
-      <span class="nt">&lt;d:LastUpdated</span> <span class="na">m:type=</span><span class="s">"Edm.DateTime"</span><span class="nt">&gt;</span>2017-02-07T09:28:34.88<span class="nt">&lt;/d:LastUpdated&gt;</span>
-      <span class="nt">&lt;d:Published</span> <span class="na">m:type=</span><span class="s">"Edm.DateTime"</span><span class="nt">&gt;</span>2017-02-07T09:28:34.88<span class="nt">&lt;/d:Published&gt;</span>
-      <span class="nt">&lt;d:PackageHash&gt;</span>LWeQ5xfhdlD3cd41KjJedTV4d7JBZRw+rmCF+7ezHNPi4bmUQACwK0y9Qlhrfr6Y2yxaRtJQ2K1d/Z2AguL7Sw==<span class="nt">&lt;/d:PackageHash&gt;</span>
-      <span class="nt">&lt;d:PackageHashAlgorithm&gt;</span>SHA512<span class="nt">&lt;/d:PackageHashAlgorithm&gt;</span>
       <span class="nt">&lt;d:PackageSize</span> <span class="na">m:type=</span><span class="s">"Edm.Int64"</span><span class="nt">&gt;</span>4103<span class="nt">&lt;/d:PackageSize&gt;</span>
       <span class="nt">&lt;d:ProjectUrl</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
       <span class="nt">&lt;d:ReleaseNotes</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
       <span class="nt">&lt;d:RequireLicenseAcceptance</span> <span class="na">m:type=</span><span class="s">"Edm.Boolean"</span><span class="nt">&gt;</span>false<span class="nt">&lt;/d:RequireLicenseAcceptance&gt;</span>
-      <span class="nt">&lt;d:Summary</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
       <span class="nt">&lt;d:Tags</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
       <span class="nt">&lt;d:Title</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
-      <span class="nt">&lt;d:VersionDownloadCount</span> <span class="na">m:type=</span><span class="s">"Edm.Int32"</span><span class="nt">&gt;</span>27<span class="nt">&lt;/d:VersionDownloadCount&gt;</span>
       <span class="nt">&lt;d:MinClientVersion</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
-      <span class="nt">&lt;d:LastEdited</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
       <span class="nt">&lt;d:LicenseUrl</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
-      <span class="nt">&lt;d:LicenseNames</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
-      <span class="nt">&lt;d:LicenseReportUrl</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
     <span class="nt">&lt;/m:properties&gt;</span>
   <span class="nt">&lt;/entry&gt;</span>
 <span class="nt">&lt;/feed&gt;</span>
@@ -799,11 +895,107 @@ entities.</p>
 </thead><tbody>
 <tr>
 <td>200 OK</td>
-<td>The result set has been returned.</td>
+<td>The result set has been returned</td>
 </tr>
 <tr>
 <td>400 Bad Request</td>
-<td>The parameter values are invalid or the set of parameters is not supported.</td>
+<td>The parameter values are invalid or the set of parameters is not supported</td>
+</tr>
+</tbody></table>
+
+          <h2 id="endpoint-get-a-single-package">Endpoint: Get a single package</h2>
+<pre class="highlight http"><code><span class="nf">GET</span> <span class="nn">/nuget/Packages(Id='Kittens',Version='1.2.0-beta')</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="p">:</span> <span class="s">example.com</span>
+</code></pre><pre class="highlight powershell"><code>Invoke-WebRequest <span class="sb">`</span>
+  -Uri http://example.com/nuget/Packages<span class="o">(</span><span class="nv">Id</span><span class="o">=</span><span class="s1">'Kittens'</span>,Version<span class="o">=</span><span class="s1">'1.2.0-beta'</span><span class="o">)</span>
+</code></pre>
+<blockquote>
+<p>The above command returns an XML response like this:</p>
+</blockquote>
+<pre class="highlight xml"><code>HTTP/1.1 200 OK
+Content-Length: 1906
+Content-Type: application/atom+xml;type=feed;charset=utf-8
+Date: Sat, 18 Feb 2017 17:04:18 GMT
+
+<span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="nt">&lt;entry</span> <span class="na">xmlns=</span><span class="s">"http://www.w3.org/2005/Atom"</span> <span class="na">xmlns:d=</span><span class="s">"http://schemas.microsoft.com/ado/2007/08/dataservices"</span> <span class="na">xmlns:georss=</span><span class="s">"http://www.georss.org/georss"</span> <span class="na">xmlns:gml=</span><span class="s">"http://www.opengis.net/gml"</span> <span class="na">xmlns:m=</span><span class="s">"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"</span> <span class="na">xml:base=</span><span class="s">"http://example.com/nuget"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;id&gt;</span>http://example.com/nuget/Packages(Id='Kittens',Version='1.2.0-beta')<span class="nt">&lt;/id&gt;</span>
+  <span class="nt">&lt;category</span> <span class="na">term=</span><span class="s">"V2FeedPackage"</span> <span class="na">scheme=</span><span class="s">"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"edit"</span> <span class="na">href=</span><span class="s">"http://example.com/nuget/Packages(Id='Kittens',Version='1.2.0-beta')"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"self"</span> <span class="na">href=</span><span class="s">"http://example.com/nuget/Packages(Id='Kittens',Version='1.2.0-beta')"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;title</span> <span class="na">type=</span><span class="s">"text"</span><span class="nt">&gt;</span>Kittens<span class="nt">&lt;/title&gt;</span>
+  <span class="nt">&lt;updated&gt;</span>2017-02-07T09:28:34Z<span class="nt">&lt;/updated&gt;</span>
+  <span class="nt">&lt;author&gt;</span>
+    <span class="nt">&lt;name&gt;</span>joelverhagen<span class="nt">&lt;/name&gt;</span>
+  <span class="nt">&lt;/author&gt;</span>
+  <span class="nt">&lt;content</span> <span class="na">type=</span><span class="s">"application/zip"</span> <span class="na">src=</span><span class="s">"http://example.com/nuget/package/Kittens/1.2.0-beta"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;m:properties&gt;</span>
+    <span class="nt">&lt;d:Version&gt;</span>1.2.0-beta<span class="nt">&lt;/d:Version&gt;</span>
+    <span class="nt">&lt;d:NormalizedVersion&gt;</span>1.2.0-beta<span class="nt">&lt;/d:NormalizedVersion&gt;</span>
+    <span class="nt">&lt;d:Copyright</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;d:Dependencies</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;d:Description&gt;</span>Descriptions are important!<span class="nt">&lt;/d:Description&gt;</span>
+    <span class="nt">&lt;d:DownloadCount</span> <span class="na">m:type=</span><span class="s">"Edm.Int32"</span><span class="nt">&gt;</span>27<span class="nt">&lt;/d:DownloadCount&gt;</span>
+    <span class="nt">&lt;d:IconUrl</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;d:IsLatestVersion</span> <span class="na">m:type=</span><span class="s">"Edm.Boolean"</span><span class="nt">&gt;</span>false<span class="nt">&lt;/d:IsLatestVersion&gt;</span>
+    <span class="nt">&lt;d:IsAbsoluteLatestVersion</span> <span class="na">m:type=</span><span class="s">"Edm.Boolean"</span><span class="nt">&gt;</span>true<span class="nt">&lt;/d:IsAbsoluteLatestVersion&gt;</span>
+    <span class="nt">&lt;d:IsPrerelease</span> <span class="na">m:type=</span><span class="s">"Edm.Boolean"</span><span class="nt">&gt;</span>false<span class="nt">&lt;/d:IsPrerelease&gt;</span>
+    <span class="nt">&lt;d:Language</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;d:PackageSize</span> <span class="na">m:type=</span><span class="s">"Edm.Int64"</span><span class="nt">&gt;</span>4103<span class="nt">&lt;/d:PackageSize&gt;</span>
+    <span class="nt">&lt;d:ProjectUrl</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;d:ReleaseNotes</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;d:RequireLicenseAcceptance</span> <span class="na">m:type=</span><span class="s">"Edm.Boolean"</span><span class="nt">&gt;</span>false<span class="nt">&lt;/d:RequireLicenseAcceptance&gt;</span>
+    <span class="nt">&lt;d:Tags</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;d:Title</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;d:MinClientVersion</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;d:LicenseUrl</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/m:properties&gt;</span>
+<span class="nt">&lt;/entry&gt;</span>
+</code></pre>
+<p>This endpoint is used to fetch metadata about a single package.</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET http://example.com/nuget/Packages(Id=&#39;{package ID}&#39;,Version=&#39;{package version}&#39;)</code></p>
+
+<h3 id="url-parameters">URL Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>{package ID}</td>
+<td>true</td>
+<td>The ID of the package fetched</td>
+</tr>
+<tr>
+<td>{package version}</td>
+<td>true</td>
+<td>The version of the package to be fetched</td>
+</tr>
+</tbody></table>
+
+<h3 id="response">Response</h3>
+
+<p>The response body is an XML document containing a single package entity.</p>
+
+<table><thead>
+<tr>
+<th>Status Code</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>200 OK</td>
+<td>The package exists and the metadata has been returned</td>
+</tr>
+<tr>
+<td>404 Not Found</td>
+<td>No package with the provided package ID and version exists</td>
 </tr>
 </tbody></table>
 
