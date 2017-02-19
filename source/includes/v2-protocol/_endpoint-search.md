@@ -1,20 +1,20 @@
-## Endpoint: enumerate packages
+## Endpoint: search for packages
 
 ```http
-GET /nuget/Packages()?$filter=IsAbsoluteLatestVersion&$orderby=Id&$skip=4&$top=1 HTTP/1.1
+GET /nuget/Search()?searchTerm='kittens'&targetFramework=''&includePrerelease=true HTTP/1.1
 Host: example.com
 ````
 
 ```powershell
 Invoke-WebRequest `
-  -Uri http://example.com/nuget/Packages()?$filter=IsAbsoluteLatestVersion&$orderby=Id&$skip=4&$top=2
+  -Uri http://example.com/nuget/Search()?searchTerm='kittens'&targetFramework=''&includePrerelease=true
 ```
 
 > The above command returns an XML response like this:
 
 ```xml
 HTTP/1.1 200 OK
-Content-Length: 3724
+Content-Length: 3823
 Content-Type: application/atom+xml;type=feed;charset=utf-8
 Date: Sat, 18 Feb 2017 17:04:18 GMT
 
@@ -44,7 +44,7 @@ Date: Sat, 18 Feb 2017 17:04:18 GMT
       <d:DownloadCount m:type="Edm.Int32">27</d:DownloadCount>
       <d:IconUrl m:null="true" />
       <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
-      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
       <d:IsPrerelease m:type="Edm.Boolean">true</d:IsPrerelease>
       <d:Language m:null="true" />
       <d:PackageSize m:type="Edm.Int64">4103</d:PackageSize>
@@ -73,7 +73,7 @@ Date: Sat, 18 Feb 2017 17:04:18 GMT
       <d:NormalizedVersion>0.1.0</d:NormalizedVersion>
       <d:Copyright m:null="true" />
       <d:Dependencies />
-      <d:Description />
+      <d:Description>A package that is definitely not about kittens.</d:Description>
       <d:DownloadCount m:type="Edm.Int32">2</d:DownloadCount>
       <d:IconUrl m:null="true" />
       <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
@@ -90,40 +90,47 @@ Date: Sat, 18 Feb 2017 17:04:18 GMT
       <d:LicenseUrl m:null="true" />
     </m:properties>
   </entry>
+  <link rel="next" href="http://example.com/nuget/FindPackagesById()?id=%27Kittens%27&$skip=2" />
 </feed>
 ```
 
-This endpoint is used to enumerate all packages available on the V2 package source.
+This endpoint is used to search package metadata for an arbitrary search term. This is the primary method used to
+discovery packages on a package source.
 
 ### HTTP Request
 
-`GET http://example.com/nuget/Packages`
+`GET http://example.com/nuget/Search()?searchTerm='{search term}'&targetFramework='{target frameworks}'&includePrerelease={true | false}`
 
 ### Query Parameters
 
-Name       | Required
----------- | --------
-`$filter`  | false   
-`$orderby` | false   
-`$select`  | false   
-`$skip`    | false   
-`$top`     | false   
+Name                | Required | Description
+------------------- | -------- | -----------
+`searchTerm`        | true     | The search term to look for in package metadata
+`targetFramework`   | true     | Zero or more target framework monikers, seperated by `|`
+`includePrerelease` | true     | `true` or `false` dictating whether prerelease packages should be included in the output
 
-**TODO**: document the availability for these parameters.
+In general, the `searchTerm` is tokenized (typically by whitespace) and used to match terms found in a package's title,
+ID, description, and tags. What set of fields are searched and how the search term is tokenized varies greatly from one
+server implementation to the next.
 
-Note the [NuGet.org has implemented filtering](https://github.com/NuGet/Home/wiki/Filter-OData-query-requests) on
-specific combinations of OData query parameters.
+In the example to the right, the Puppies package is matched because its description contains the search term "kittens".
+
+<aside>Some server implementations ignore the `targetFramework` parameter completely.</aside>
+
+<aside>Some server allow these query parameters to be excluded.</aside>
+
+**TODO**: document the availability of the standard OData parameters
 
 ### Response
 
 The response body is an XML document containing a collection of package entities. There can be zero or more package
-entities.
+entities. If the search term, target monikers, or prerelease flag eliminate all results, an empty result set is
+returned.
 
-**TODO**: document when the URL to the next page is available.
-
-<aside>There is some inconsistency in the error status codes returned from different server implementations.</aside>
+For large result sets (packages that have many versions), a `<link rel="next" href="..." />` element can be returned.
+This should be followed to fetch the next set of results.
 
 Status Code     | Meaning
 --------------- | -------
 200 OK          | The result set has been returned
-400 Bad Request | The parameter values are invalid or the set of parameters is not supported
+404 Bad Request | A required parameter is missing or the provided set of query parameters is not valid or not supported

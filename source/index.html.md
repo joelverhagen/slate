@@ -20,6 +20,7 @@ includes:
   - v2-protocol/endpoint-enumerate-packages
   - v2-protocol/endpoint-get-a-single-package
   - v2-protocol/endpoint-find-packages-by-id
+  - v2-protocol/endpoint-search
 
 search: true
 ---

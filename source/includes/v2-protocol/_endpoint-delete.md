@@ -44,9 +44,9 @@ Name              | Required | Description
 
 ### Headers
 
-Name           | Required | Description
--------------- | -------- | -----------
-X-NuGet-ApiKey | true     | The API key used to authenticate the caller.
+Name             | Required | Description
+---------------- | -------- | -----------
+`X-NuGet-ApiKey` | true     | The API key used to authenticate the caller.
 
 ### Response
 

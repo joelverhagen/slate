@@ -102,19 +102,19 @@ This endpoint is used to enumerate all versions of a given package ID.
 
 ### Query Parameters
 
-Name | Required | Description
----- | -------- | -----------
-id   | true     | Package ID to fetch all of the versions. Note that the ID must be surrounded in single quotes.
+Name   | Required | Description
+------ | -------- | -----------
+`id`   | true     | Package ID to fetch all of the versions. Note that the ID must be surrounded in single quotes.
 
 <aside>There is some inconsistency in support for the optional query parameters.</aside>
 
-Name     | Required | [Availability](#quirk-abbreviations)
--------- | -------- | ------------------------------------
-$filter  | false    | MY, NG, NS2, NS3, VS
-$orderby | false    | MY, NG, NS2, NS3
-$select  | false    | MY, NG ([bug](https://github.com/NuGet/NuGetGallery/issues/3579)), NS2, NS3
-$skip    | false    | MY, NG, NS2, NS3
-$top     | false    | MY, NG, NS2, NS3
+Name       | Required | [Availability](#quirk-abbreviations)
+---------- | -------- | ------------------------------------
+`$filter`  | false    | MY, NG, NS2, NS3, VS
+`$orderby` | false    | MY, NG, NS2, NS3
+`$select`  | false    | MY, NG ([bug](https://github.com/NuGet/NuGetGallery/issues/3579)), NS2, NS3
+`$skip`    | false    | MY, NG, NS2, NS3
+`$top`     | false    | MY, NG, NS2, NS3
 
 ### Response
 
