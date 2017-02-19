@@ -14,10 +14,12 @@ includes:
   - authentication
   - v2-protocol/introduction
   - v2-protocol/package-entity
+  - v2-protocol/odata-parameters
   - v2-protocol/endpoint-push
   - v2-protocol/endpoint-delete
   - v2-protocol/endpoint-enumerate-packages
   - v2-protocol/endpoint-get-a-single-package
+  - v2-protocol/endpoint-find-packages-by-id
 
 search: true
 ---

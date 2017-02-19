@@ -1,4 +1,4 @@
-## Endpoint: Push
+## Endpoint: push package
 
 ```http
 POST /nuget HTTP/1.1

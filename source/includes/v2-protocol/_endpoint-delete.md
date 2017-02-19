@@ -1,4 +1,4 @@
-## Endpoint: Delete
+## Endpoint: delete package
 
 ```http
 DELETE /nuget/Kittens/1.2.0-beta HTTP/1.1

@@ -1,4 +1,4 @@
-## Endpoint: Find packages by ID
+## Endpoint: find packages by ID
 
 ```http
 GET /nuget/FindPackagesById()?id='Kittens' HTTP/1.1
@@ -94,7 +94,7 @@ Date: Sat, 18 Feb 2017 17:04:18 GMT
 </feed>
 ```
 
-This endpoint is used to enumerate all versions of a given package ID
+This endpoint is used to enumerate all versions of a given package ID.
 
 ### HTTP Request
 
@@ -104,7 +104,7 @@ This endpoint is used to enumerate all versions of a given package ID
 
 Name | Required | Description
 ---- | -------- | -----------
-id   | true     | Package ID to fetch all of the versions
+id   | true     | Package ID to fetch all of the versions. Note that the ID must be surrounded in single quotes.
 
 <aside>There is some inconsistency in support for the optional query parameters.</aside>
 
@@ -115,9 +115,6 @@ $orderby | false    | MY, NG, NS2, NS3
 $select  | false    | MY, NG ([bug](https://github.com/NuGet/NuGetGallery/issues/3579)), NS2, NS3
 $skip    | false    | MY, NG, NS2, NS3
 $top     | false    | MY, NG, NS2, NS3
-
-Note the [NuGet.org has implemented filtering](https://github.com/NuGet/Home/wiki/Filter-OData-query-requests) on
-specific combinations of OData query parameters.
 
 ### Response
 

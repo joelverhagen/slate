@@ -1,4 +1,4 @@
-## Endpoint: Get a single package
+## Endpoint: get a single package
 
 ```http
 GET /nuget/Packages(Id='Kittens',Version='1.2.0-beta') HTTP/1.1
@@ -66,6 +66,8 @@ Name              | Required | Description
 ----------------- | -------- | -----------
 {package ID}      | true     | The ID of the package fetched
 {package version} | true     | The version of the package to be fetched
+
+**TODO**: document what OData query parameters are supported
 
 ### Response
 

@@ -1,4 +1,4 @@
-## Endpoint: Enumerate packages
+## Endpoint: enumerate packages
 
 ```http
 GET /nuget/Packages()?$filter=IsAbsoluteLatestVersion&$orderby=Id&$skip=4&$top=1 HTTP/1.1
@@ -101,12 +101,18 @@ This endpoint is used to enumerate all packages available on the V2 package sour
 
 ### Query Parameters
 
-Name     | Required | Description
--------- | -------- | -----------
-$filter  | false    | [OData $filter option](http://www.odata.org/documentation/odata-version-2-0/uri-conventions/#FilterSystemQueryOption) used to determine if a package should be in the result set.
-$orderby | false    | [OData $orderby option](http://www.odata.org/documentation/odata-version-2-0/uri-conventions/#OrderBySystemQueryOption) used to sort the result set.
-$skip    | false    | [OData $skip option](http://www.odata.org/documentation/odata-version-2-0/uri-conventions/#SkipSystemQueryOption) used for paging across the result set.
-$top     | false    | [OData $top option](http://www.odata.org/documentation/odata-version-2-0/uri-conventions/#TopSystemQueryOption) used for paging across the result set.
+Name     | Required
+-------- | --------
+$filter  | false   
+$orderby | false   
+$select  | false   
+$skip    | false   
+$top     | false   
+
+**TODO**: document the availability for these parameters.
+
+Note the [NuGet.org has implemented filtering](https://github.com/NuGet/Home/wiki/Filter-OData-query-requests) on
+specific combinations of OData query parameters.
 
 ### Response
 
