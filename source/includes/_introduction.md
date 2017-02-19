@@ -30,12 +30,15 @@ client implementations should be noted. For example:
 Where possible, any different behavior between client or server implementation will be enumerated and explained. To make
 the explanation of different implementations more terse, the following abbreviations will be used:
 
-Abbreviation | Implementation                    | Server or client
------------- | --------------------------------- | ----------------
-MY           | MyGet                             | Server
-NS           | NuGet.Server                      | Server
-NU           | NuGet.org (NuGetGallery)          | Server
-VS           | Visual Studio Team Service (VSTS) | Server
+## Quirk Abbreviations
+
+Abbreviation | Implementation
+------------ | --------------
+MY           | [MyGet](https://www.myget.org/)
+NG           | [NuGetGallery](https://github.com/NuGet/NuGetGallery) (NuGet.org)
+NS2          | [NuGet.Server on WCF](https://github.com/NuGet/NuGet.Server/tree/master)
+NS3          | [NuGet.Server on Web API](https://github.com/NuGet/NuGet.Server/tree/dev)
+VS           | [Visual Studio Team Services (VSTS)](https://www.visualstudio.com/en-us/docs/integrate/api/packaging/overview)
 
 # Terminology
 
@@ -63,7 +66,9 @@ the package can be fetched from their packages sources. The package ID is a case
 some quirks when it comes to casing.
 
 The **package version** is SemVer 1.0.0 version string (although SemVer 2.0.0 support is coming). As a package changes
-over time, the package version is changes to reflect this but the package ID stays the same.
+over time, the package version is changes to reflect this but the package ID stays the same. Equivalency of two version
+strings in general is defined by the SemVer specification. However, NuGet package versions can have a fourth integer in
+the version number (to align with `System.Version`) and comparison is done in a **case-insensitive** manner.
 
 The **identity of a package** is the pair of package ID and package version. This pair is meant to unambiguously allow
 a package to be retrieved from a package source.

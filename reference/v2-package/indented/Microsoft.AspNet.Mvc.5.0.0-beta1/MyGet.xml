@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xml:base="https://www.myget.org/F/jver-sandbox2/api/v2/">
+  <id>https://www.myget.org/F/jver-sandbox2/api/v2/Packages(Id='Microsoft.AspNet.Mvc',Version='5.0.0-beta1')</id>
+  <category term="MyGet.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link rel="edit" title="V2FeedPackage" href="Packages(Id='Microsoft.AspNet.Mvc',Version='5.0.0-beta1')" />
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Screenshots" type="application/atom+xml;type=feed" title="Screenshots" href="Packages(Id='Microsoft.AspNet.Mvc',Version='5.0.0-beta1')/Screenshots" />
+  <title type="text">Microsoft ASP.NET MVC</title>
+  <summary type="text">This package contains the runtime assemblies for ASP.NET MVC.</summary>
+  <updated>2017-02-19T19:43:16Z</updated>
+  <author>
+    <name>Microsoft</name>
+  </author>
+  <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='Microsoft.AspNet.Mvc',Version='5.0.0-beta1')/$value" />
+  <content type="binary/octet-stream" src="https://www.myget.org/F/jver-sandbox2/api/v2/package/Microsoft.AspNet.Mvc/5.0.0-beta1" />
+  <m:properties>
+    <d:Id>Microsoft.AspNet.Mvc</d:Id>
+    <d:Version>5.0.0-beta1</d:Version>
+    <d:NormalizedVersion>5.0.0-beta1</d:NormalizedVersion>
+    <d:Copyright>© Microsoft Corporation. All rights reserved.</d:Copyright>
+    <d:Created m:type="Edm.DateTime">2017-02-19T19:43:16.1698317Z</d:Created>
+    <d:Dependencies>Microsoft.AspNet.WebPages:[3.0.0-beta1, ):|Microsoft.AspNet.Razor:[3.0.0-beta1, ):</d:Dependencies>
+    <d:Description>This package contains the runtime assemblies for ASP.NET MVC. ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that enables a clean separation of concerns and that gives you full control over markup.</d:Description>
+    <d:DownloadCount m:type="Edm.Int32">0</d:DownloadCount>
+    <d:GalleryDetailsUrl>https://www.myget.org/feed/jver-sandbox2/package/nuget/Microsoft.AspNet.Mvc/5.0.0-beta1</d:GalleryDetailsUrl>
+    <d:IconUrl m:null="true" />
+    <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+    <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+    <d:LastEdited m:type="Edm.DateTime">2017-02-19T19:43:16.1698317Z</d:LastEdited>
+    <d:Published m:type="Edm.DateTime">2017-02-19T19:43:16.1698317Z</d:Published>
+    <d:LicenseUrl>http://www.microsoft.com/web/webpi/eula/MVC_ENU.htm</d:LicenseUrl>
+    <d:LicenseNames m:null="true" />
+    <d:LicenseReportUrl m:null="true" />
+    <d:PackageHash>O/4IGarwJ9D0fKdzWXmmgn7Uh0SnDz6MrmzFeMM8BItrlxwFo/VJs36/UGQGda+tTnd04I4lIwZq7zhZ/1X35w==</d:PackageHash>
+    <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+    <d:PackageSize m:type="Edm.Int64">268220</d:PackageSize>
+    <d:ProjectUrl>http://www.asp.net/mvc</d:ProjectUrl>
+    <d:ReleaseNotes m:null="true" />
+    <d:ReportAbuseUrl>http://localhost</d:ReportAbuseUrl>
+    <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+    <d:Tags>Microsoft AspNet Mvc AspNetMvc</d:Tags>
+    <d:Title>Microsoft ASP.NET MVC</d:Title>
+    <d:VersionDownloadCount m:type="Edm.Int32">0</d:VersionDownloadCount>
+    <d:IsPrerelease m:type="Edm.Boolean">true</d:IsPrerelease>
+    <d:MinClientVersion m:null="true" />
+    <d:Language>en-US</d:Language>
+  </m:properties>
+</entry>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xml:base="http://localhost:40221/nuget">
+  <id>http://localhost:40221/nuget/Packages(Id='Newtonsoft.Json',Version='9.0.2-beta2')</id>
+  <category term="NuGet.Server.Core.DataServices.ODataPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link rel="edit" href="http://localhost:40221/nuget/Packages(Id='Newtonsoft.Json',Version='9.0.2-beta2')" />
+  <link rel="self" href="http://localhost:40221/nuget/Packages(Id='Newtonsoft.Json',Version='9.0.2-beta2')" />
+  <title type="text">Newtonsoft.Json</title>
+  <published>2017-02-19T18:26:56Z</published>
+  <updated>2017-02-19T18:26:56Z</updated>
+  <author>
+    <name>James Newton-King</name>
+  </author>
+  <m:action metadata="http://localhost:40221/nuget/$metadata#Container.Download" title="Download" target="http://localhost:40221/nuget/Packages(Id='Newtonsoft.Json',Version='9.0.2-beta2')/Download" />
+  <content type="application/zip" src="http://localhost:40221/nuget/Packages(Id='Newtonsoft.Json',Version='9.0.2-beta2')/Download" />
+  <m:properties>
+    <d:Id>Newtonsoft.Json</d:Id>
+    <d:Version>9.0.2-beta2</d:Version>
+    <d:NormalizedVersion>9.0.2-beta2</d:NormalizedVersion>
+    <d:IsPrerelease m:type="Edm.Boolean">true</d:IsPrerelease>
+    <d:Title>Json.NET</d:Title>
+    <d:Authors>James Newton-King</d:Authors>
+    <d:Owners>James Newton-King</d:Owners>
+    <d:IconUrl>http://www.newtonsoft.com/content/images/nugeticon.png</d:IconUrl>
+    <d:LicenseUrl>https://raw.github.com/JamesNK/Newtonsoft.Json/master/LICENSE.md</d:LicenseUrl>
+    <d:ProjectUrl>http://www.newtonsoft.com/json</d:ProjectUrl>
+    <d:DownloadCount m:type="Edm.Int32">-1</d:DownloadCount>
+    <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+    <d:DevelopmentDependency m:type="Edm.Boolean">false</d:DevelopmentDependency>
+    <d:Description>Json.NET is a popular high-performance JSON framework for .NET</d:Description>
+    <d:Summary m:null="true" />
+    <d:ReleaseNotes m:null="true" />
+    <d:Published m:type="Edm.DateTime">2017-02-19T18:26:56.5154887Z</d:Published>
+    <d:LastUpdated m:type="Edm.DateTime">2017-02-19T18:26:56.5204943Z</d:LastUpdated>
+    <d:Dependencies>::net45|::net40|::net35|::net20|::portable-net45+win+wpa81+wp80|::portable-net40+sl50+win+wpa81+wp80|Microsoft.CSharp:4.0.1:netstandard1.1|System.Collections:4.0.11:netstandard1.1|System.ComponentModel.TypeConverter:4.1.0:netstandard1.1|System.Diagnostics.Debug:4.0.11:netstandard1.1|System.Dynamic.Runtime:4.0.11:netstandard1.1|System.Globalization:4.0.11:netstandard1.1|System.IO:4.1.0:netstandard1.1|System.Linq:4.1.0:netstandard1.1|System.Linq.Expressions:4.1.0:netstandard1.1|System.ObjectModel:4.0.12:netstandard1.1|System.Reflection:4.1.0:netstandard1.1|System.Reflection.Extensions:4.0.1:netstandard1.1|System.Resources.ResourceManager:4.0.1:netstandard1.1|System.Runtime:4.1.0:netstandard1.1|System.Runtime.Extensions:4.1.0:netstandard1.1|System.Runtime.Numerics:4.0.1:netstandard1.1|System.Runtime.Serialization.Primitives:4.1.1:netstandard1.1|System.Text.Encoding:4.0.11:netstandard1.1|System.Text.Encoding.Extensions:4.0.11:netstandard1.1|System.Text.RegularExpressions:4.1.0:netstandard1.1|System.Threading:4.0.11:netstandard1.1|System.Threading.Tasks:4.0.11:netstandard1.1|System.Xml.ReaderWriter:4.0.11:netstandard1.1|System.Xml.XDocument:4.0.11:netstandard1.1|Microsoft.CSharp:4.0.1:netstandard1.0|System.Collections:4.0.11:netstandard1.0|System.ComponentModel.TypeConverter:4.1.0:netstandard1.0|System.Diagnostics.Debug:4.0.11:netstandard1.0|System.Dynamic.Runtime:4.0.11:netstandard1.0|System.Globalization:4.0.11:netstandard1.0|System.IO:4.1.0:netstandard1.0|System.Linq:4.1.0:netstandard1.0|System.Linq.Expressions:4.1.0:netstandard1.0|System.ObjectModel:4.0.12:netstandard1.0|System.Reflection:4.1.0:netstandard1.0|System.Reflection.Extensions:4.0.1:netstandard1.0|System.Resources.ResourceManager:4.0.1:netstandard1.0|System.Runtime:4.1.0:netstandard1.0|System.Runtime.Extensions:4.1.0:netstandard1.0|System.Runtime.Serialization.Primitives:4.1.1:netstandard1.0|System.Text.Encoding:4.0.11:netstandard1.0|System.Text.Encoding.Extensions:4.0.11:netstandard1.0|System.Text.RegularExpressions:4.1.0:netstandard1.0|System.Threading:4.0.11:netstandard1.0|System.Threading.Tasks:4.0.11:netstandard1.0|System.Xml.ReaderWriter:4.0.11:netstandard1.0|System.Xml.XDocument:4.0.11:netstandard1.0</d:Dependencies>
+    <d:PackageHash>g29gt1Ux5izsximmPpsNf0NAcO/Pl8FA0uRzTxINPINwXJ8+QjzdGLIa2gf0/tGNclxHj5QGek1/tu6Ghc9Gcg==</d:PackageHash>
+    <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+    <d:PackageSize m:type="Edm.Int64">2082516</d:PackageSize>
+    <d:Copyright m:null="true" />
+    <d:Tags xml:space="preserve"> json </d:Tags>
+    <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+    <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+    <d:Listed m:type="Edm.Boolean">true</d:Listed>
+    <d:VersionDownloadCount m:type="Edm.Int32">-1</d:VersionDownloadCount>
+    <d:MinClientVersion m:null="true" />
+    <d:Language>en-US</d:Language>
+  </m:properties>
+</entry>

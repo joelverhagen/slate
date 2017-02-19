@@ -12,7 +12,12 @@ toc_footers:
 includes:
   - introduction
   - authentication
-  - v2-protocol
+  - v2-protocol/introduction
+  - v2-protocol/package-entity
+  - v2-protocol/endpoint-push
+  - v2-protocol/endpoint-delete
+  - v2-protocol/endpoint-enumerate-packages
+  - v2-protocol/endpoint-get-a-single-package
 
 search: true
 ---
