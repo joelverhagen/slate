@@ -562,7 +562,49 @@ determine a package&rsquo;s ID.</p>
 <p>It may be tempting to parse the ID out of the URL found in the <code class="prettyprint">&lt;id&gt;</code> element. However, this is not guaranteed to have
 SemVer 2.0.0 build metadata.</p>
 
-          <h2 id="endpoint-push">Endpoint: Push</h2>
+          <h2 id="odata-parameters">OData parameters</h2>
+
+<p>OData supports a number of standard query parameters to manipulate the result set.</p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><a href="http://www.odata.org/documentation/odata-version-2-0/uri-conventions/#FilterSystemQueryOption">$filter</a></td>
+<td>false</td>
+<td>Used to determine if a package should be in the result set</td>
+</tr>
+<tr>
+<td><a href="http://www.odata.org/documentation/odata-version-2-0/uri-conventions/#OrderBySystemQueryOption">$orderby</a></td>
+<td>false</td>
+<td>Used to sort the result set</td>
+</tr>
+<tr>
+<td><a href="http://www.odata.org/documentation/odata-version-2-0/uri-conventions/#SelectSystemQueryOption">$select</a></td>
+<td>false</td>
+<td>Used to return a subset of properties on each package.</td>
+</tr>
+<tr>
+<td><a href="http://www.odata.org/documentation/odata-version-2-0/uri-conventions/#SkipSystemQueryOption">$skip</a></td>
+<td>false</td>
+<td>Used for paging across the result set</td>
+</tr>
+<tr>
+<td><a href="http://www.odata.org/documentation/odata-version-2-0/uri-conventions/#TopSystemQueryOption">$top</a></td>
+<td>false</td>
+<td>Used for paging across the result set</td>
+</tr>
+</tbody></table>
+
+<p>The query parameters have varying support across different endpoints and server implementations.</p>
+
+<p><strong>TODO</strong>: Document support for $count, $format, $expand, $inlinecount, etc.</p>
+
+          <h2 id="endpoint-push-package">Endpoint: push package</h2>
 <pre class="highlight http"><code><span class="nf">POST</span> <span class="nn">/nuget</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Host</span><span class="p">:</span> <span class="s">example.com</span>
 <span class="na">X-NuGet-ApiKey</span><span class="p">:</span> <span class="s">meowmeow</span>
@@ -683,7 +725,7 @@ being pushed.</p>
 
 <p>The official NuGet client treats all 200-level responses as success and everything else as a failure.</p>
 
-          <h2 id="endpoint-delete">Endpoint: Delete</h2>
+          <h2 id="endpoint-delete-package">Endpoint: delete package</h2>
 <pre class="highlight http"><code><span class="nf">DELETE</span> <span class="nn">/nuget/Kittens/1.2.0-beta</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Host</span><span class="p">:</span> <span class="s">example.com</span>
 <span class="na">X-NuGet-ApiKey</span><span class="p">:</span> <span class="s">meowmeow</span>
@@ -793,7 +835,7 @@ operation either as complete package removal or as the unlist operation.</p>
 
 <p>The official NuGet client treats all 200-level responses as success and everything else as a failure.</p>
 
-          <h2 id="endpoint-enumerate-packages">Endpoint: Enumerate packages</h2>
+          <h2 id="endpoint-enumerate-packages">Endpoint: enumerate packages</h2>
 <pre class="highlight http"><code><span class="nf">GET</span> <span class="nn">/nuget/Packages()?$filter=IsAbsoluteLatestVersion&amp;$orderby=Id&amp;$skip=4&amp;$top=1</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Host</span><span class="p">:</span> <span class="s">example.com</span>
 </code></pre><pre class="highlight powershell"><code>Invoke-WebRequest <span class="sb">`</span>
@@ -893,30 +935,34 @@ Date: Sat, 18 Feb 2017 17:04:18 GMT
 <tr>
 <th>Name</th>
 <th>Required</th>
-<th>Description</th>
 </tr>
 </thead><tbody>
 <tr>
 <td>$filter</td>
 <td>false</td>
-<td><a href="http://www.odata.org/documentation/odata-version-2-0/uri-conventions/#FilterSystemQueryOption">OData $filter option</a> used to determine if a package should be in the result set.</td>
 </tr>
 <tr>
 <td>$orderby</td>
 <td>false</td>
-<td><a href="http://www.odata.org/documentation/odata-version-2-0/uri-conventions/#OrderBySystemQueryOption">OData $orderby option</a> used to sort the result set.</td>
+</tr>
+<tr>
+<td>$select</td>
+<td>false</td>
 </tr>
 <tr>
 <td>$skip</td>
 <td>false</td>
-<td><a href="http://www.odata.org/documentation/odata-version-2-0/uri-conventions/#SkipSystemQueryOption">OData $skip option</a> used for paging across the result set.</td>
 </tr>
 <tr>
 <td>$top</td>
 <td>false</td>
-<td><a href="http://www.odata.org/documentation/odata-version-2-0/uri-conventions/#TopSystemQueryOption">OData $top option</a> used for paging across the result set.</td>
 </tr>
 </tbody></table>
+
+<p><strong>TODO</strong>: document the availability for these parameters.</p>
+
+<p>Note the <a href="https://github.com/NuGet/Home/wiki/Filter-OData-query-requests">NuGet.org has implemented filtering</a> on
+specific combinations of OData query parameters.</p>
 
 <h3 id="response">Response</h3>
 
@@ -943,7 +989,7 @@ entities.</p>
 </tr>
 </tbody></table>
 
-          <h2 id="endpoint-get-a-single-package">Endpoint: Get a single package</h2>
+          <h2 id="endpoint-get-a-single-package">Endpoint: get a single package</h2>
 <pre class="highlight http"><code><span class="nf">GET</span> <span class="nn">/nuget/Packages(Id='Kittens',Version='1.2.0-beta')</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Host</span><span class="p">:</span> <span class="s">example.com</span>
 </code></pre><pre class="highlight powershell"><code>Invoke-WebRequest <span class="sb">`</span>
@@ -1019,6 +1065,8 @@ Date: Sat, 18 Feb 2017 17:04:18 GMT
 </tr>
 </tbody></table>
 
+<p><strong>TODO</strong>: document what OData query parameters are supported</p>
+
 <h3 id="response">Response</h3>
 
 <p>The response body is an XML document containing a single package entity.</p>
@@ -1036,6 +1084,177 @@ Date: Sat, 18 Feb 2017 17:04:18 GMT
 <tr>
 <td>404 Not Found</td>
 <td>No package with the provided package ID and version exists</td>
+</tr>
+</tbody></table>
+
+          <h2 id="endpoint-find-packages-by-id">Endpoint: find packages by ID</h2>
+<pre class="highlight http"><code><span class="nf">GET</span> <span class="nn">/nuget/FindPackagesById()?id='Kittens'</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="p">:</span> <span class="s">example.com</span>
+</code></pre><pre class="highlight powershell"><code>Invoke-WebRequest <span class="sb">`</span>
+  -Uri http://example.com/nuget/FindPackagesById<span class="o">()</span>?id<span class="o">=</span><span class="s1">'Kittens'</span>
+</code></pre>
+<blockquote>
+<p>The above command returns an XML response like this:</p>
+</blockquote>
+<pre class="highlight xml"><code>HTTP/1.1 200 OK
+Content-Length: 3823
+Content-Type: application/atom+xml;type=feed;charset=utf-8
+Date: Sat, 18 Feb 2017 17:04:18 GMT
+
+<span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="nt">&lt;feed</span> <span class="na">xmlns=</span><span class="s">"http://www.w3.org/2005/Atom"</span> <span class="na">xmlns:d=</span><span class="s">"http://schemas.microsoft.com/ado/2007/08/dataservices"</span> <span class="na">xmlns:georss=</span><span class="s">"http://www.georss.org/georss"</span> <span class="na">xmlns:gml=</span><span class="s">"http://www.opengis.net/gml"</span> <span class="na">xmlns:m=</span><span class="s">"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"</span> <span class="na">xml:base=</span><span class="s">"http://example.com/nuget"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;id&gt;</span>http://schemas.datacontract.org/2004/07/<span class="nt">&lt;/id&gt;</span>
+  <span class="nt">&lt;title</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;updated&gt;</span>2017-02-18T21:38:03Z<span class="nt">&lt;/updated&gt;</span>
+  <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"self"</span> <span class="na">href=</span><span class="s">"http://example.com/nuget/Packages"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;entry&gt;</span>
+    <span class="nt">&lt;id&gt;</span>http://example.com/nuget/Packages(Id='Kittens',Version='1.2.0-beta')<span class="nt">&lt;/id&gt;</span>
+    <span class="nt">&lt;category</span> <span class="na">term=</span><span class="s">"V2FeedPackage"</span> <span class="na">scheme=</span><span class="s">"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"edit"</span> <span class="na">href=</span><span class="s">"http://example.com/nuget/Packages(Id='Kittens',Version='1.2.0-beta')"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"self"</span> <span class="na">href=</span><span class="s">"http://example.com/nuget/Packages(Id='Kittens',Version='1.2.0-beta')"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;title</span> <span class="na">type=</span><span class="s">"text"</span><span class="nt">&gt;</span>Kittens<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;updated&gt;</span>2017-02-07T09:28:34Z<span class="nt">&lt;/updated&gt;</span>
+    <span class="nt">&lt;author&gt;</span>
+      <span class="nt">&lt;name&gt;</span>joelverhagen<span class="nt">&lt;/name&gt;</span>
+    <span class="nt">&lt;/author&gt;</span>
+    <span class="nt">&lt;content</span> <span class="na">type=</span><span class="s">"application/zip"</span> <span class="na">src=</span><span class="s">"http://example.com/nuget/package/Kittens/1.2.0-beta"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;m:properties&gt;</span>
+      <span class="nt">&lt;d:Version&gt;</span>1.2.0-beta<span class="nt">&lt;/d:Version&gt;</span>
+      <span class="nt">&lt;d:NormalizedVersion&gt;</span>1.2.0-beta<span class="nt">&lt;/d:NormalizedVersion&gt;</span>
+      <span class="nt">&lt;d:Copyright</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;d:Dependencies</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;d:Description&gt;</span>Descriptions are important!<span class="nt">&lt;/d:Description&gt;</span>
+      <span class="nt">&lt;d:DownloadCount</span> <span class="na">m:type=</span><span class="s">"Edm.Int32"</span><span class="nt">&gt;</span>27<span class="nt">&lt;/d:DownloadCount&gt;</span>
+      <span class="nt">&lt;d:IconUrl</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;d:IsLatestVersion</span> <span class="na">m:type=</span><span class="s">"Edm.Boolean"</span><span class="nt">&gt;</span>false<span class="nt">&lt;/d:IsLatestVersion&gt;</span>
+      <span class="nt">&lt;d:IsAbsoluteLatestVersion</span> <span class="na">m:type=</span><span class="s">"Edm.Boolean"</span><span class="nt">&gt;</span>false<span class="nt">&lt;/d:IsAbsoluteLatestVersion&gt;</span>
+      <span class="nt">&lt;d:IsPrerelease</span> <span class="na">m:type=</span><span class="s">"Edm.Boolean"</span><span class="nt">&gt;</span>true<span class="nt">&lt;/d:IsPrerelease&gt;</span>
+      <span class="nt">&lt;d:Language</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;d:PackageSize</span> <span class="na">m:type=</span><span class="s">"Edm.Int64"</span><span class="nt">&gt;</span>4103<span class="nt">&lt;/d:PackageSize&gt;</span>
+      <span class="nt">&lt;d:ProjectUrl</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;d:ReleaseNotes</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;d:RequireLicenseAcceptance</span> <span class="na">m:type=</span><span class="s">"Edm.Boolean"</span><span class="nt">&gt;</span>false<span class="nt">&lt;/d:RequireLicenseAcceptance&gt;</span>
+      <span class="nt">&lt;d:Tags</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;d:Title</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;d:MinClientVersion</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;d:LicenseUrl</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/m:properties&gt;</span>
+  <span class="nt">&lt;/entry&gt;</span>  
+  <span class="nt">&lt;entry&gt;</span>
+    <span class="nt">&lt;id&gt;</span>http://example.com/nuget/Packages(Id='Kittens',Version='1.3.0')<span class="nt">&lt;/id&gt;</span>
+    <span class="nt">&lt;category</span> <span class="na">term=</span><span class="s">"V2FeedPackage"</span> <span class="na">scheme=</span><span class="s">"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"edit"</span> <span class="na">href=</span><span class="s">"http://example.com/nuget/Packages(Id='Kittens',Version='1.3.0')"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"self"</span> <span class="na">href=</span><span class="s">"http://example.com/nuget/Packages(Id='Kittens',Version='1.3.0')"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;title</span> <span class="na">type=</span><span class="s">"text"</span><span class="nt">&gt;</span>Kittens<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;updated&gt;</span>2017-02-07T09:28:34Z<span class="nt">&lt;/updated&gt;</span>
+    <span class="nt">&lt;author&gt;</span>
+      <span class="nt">&lt;name&gt;</span>joelverhagen<span class="nt">&lt;/name&gt;</span>
+    <span class="nt">&lt;/author&gt;</span>
+    <span class="nt">&lt;content</span> <span class="na">type=</span><span class="s">"application/zip"</span> <span class="na">src=</span><span class="s">"http://example.com/nuget/package/Kittens/1.3.0"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;m:properties&gt;</span>
+      <span class="nt">&lt;d:Version&gt;</span>1.3.0<span class="nt">&lt;/d:Version&gt;</span>
+      <span class="nt">&lt;d:NormalizedVersion&gt;</span>1.3.0<span class="nt">&lt;/d:NormalizedVersion&gt;</span>
+      <span class="nt">&lt;d:Copyright</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;d:Dependencies</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;d:Description&gt;</span>Descriptions are important! Especially when a package releases a stable version.<span class="nt">&lt;/d:Description&gt;</span>
+      <span class="nt">&lt;d:DownloadCount</span> <span class="na">m:type=</span><span class="s">"Edm.Int32"</span><span class="nt">&gt;</span>739<span class="nt">&lt;/d:DownloadCount&gt;</span>
+      <span class="nt">&lt;d:IconUrl</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;d:IsLatestVersion</span> <span class="na">m:type=</span><span class="s">"Edm.Boolean"</span><span class="nt">&gt;</span>true<span class="nt">&lt;/d:IsLatestVersion&gt;</span>
+      <span class="nt">&lt;d:IsAbsoluteLatestVersion</span> <span class="na">m:type=</span><span class="s">"Edm.Boolean"</span><span class="nt">&gt;</span>true<span class="nt">&lt;/d:IsAbsoluteLatestVersion&gt;</span>
+      <span class="nt">&lt;d:IsPrerelease</span> <span class="na">m:type=</span><span class="s">"Edm.Boolean"</span><span class="nt">&gt;</span>false<span class="nt">&lt;/d:IsPrerelease&gt;</span>
+      <span class="nt">&lt;d:Language</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;d:PackageSize</span> <span class="na">m:type=</span><span class="s">"Edm.Int64"</span><span class="nt">&gt;</span>4431<span class="nt">&lt;/d:PackageSize&gt;</span>
+      <span class="nt">&lt;d:ProjectUrl</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;d:ReleaseNotes</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;d:RequireLicenseAcceptance</span> <span class="na">m:type=</span><span class="s">"Edm.Boolean"</span><span class="nt">&gt;</span>false<span class="nt">&lt;/d:RequireLicenseAcceptance&gt;</span>
+      <span class="nt">&lt;d:Tags</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;d:Title</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;d:MinClientVersion</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;d:LicenseUrl</span> <span class="na">m:null=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/m:properties&gt;</span>
+  <span class="nt">&lt;/entry&gt;</span>
+  <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"next"</span> <span class="na">href=</span><span class="s">"http://example.com/nuget/FindPackagesById()?id=%27Kittens%27&amp;$skip=2"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/feed&gt;</span>
+</code></pre>
+<p>This endpoint is used to enumerate all versions of a given package ID.</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET http://example.com/nuget/FindPackagesById()?id=&#39;{package ID}&#39;</code></p>
+
+<h3 id="query-parameters">Query Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>true</td>
+<td>Package ID to fetch all of the versions. Note that the ID must be surrounded in single quotes.</td>
+</tr>
+</tbody></table>
+
+<aside>There is some inconsistency in support for the optional query parameters.</aside>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Required</th>
+<th><a href="#quirk-abbreviations">Availability</a></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>$filter</td>
+<td>false</td>
+<td>MY, NG, NS2, NS3, VS</td>
+</tr>
+<tr>
+<td>$orderby</td>
+<td>false</td>
+<td>MY, NG, NS2, NS3</td>
+</tr>
+<tr>
+<td>$select</td>
+<td>false</td>
+<td>MY, NG (<a href="https://github.com/NuGet/NuGetGallery/issues/3579">bug</a>), NS2, NS3</td>
+</tr>
+<tr>
+<td>$skip</td>
+<td>false</td>
+<td>MY, NG, NS2, NS3</td>
+</tr>
+<tr>
+<td>$top</td>
+<td>false</td>
+<td>MY, NG, NS2, NS3</td>
+</tr>
+</tbody></table>
+
+<h3 id="response">Response</h3>
+
+<p>The response body is an XML document containing a collection of package entities. There can be zero or more package
+entities. If the package ID does not exist on the package source, an empty result set is returned.</p>
+
+<p>For large result sets (packages that have many versions), a <code class="prettyprint">&lt;link rel=&quot;next&quot; href=&quot;...&quot; /&gt;</code> element can be returned.
+This should be followed to fetch the next set of results.</p>
+
+<table><thead>
+<tr>
+<th>Status Code</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>200 OK</td>
+<td>The result set has been returned</td>
+</tr>
+<tr>
+<td>404 Bad Request</td>
+<td>The provided set of query parameters is not valid or not supported</td>
 </tr>
 </tbody></table>
 
