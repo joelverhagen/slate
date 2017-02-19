@@ -1,20 +1,20 @@
-## Endpoint: Enumerate packages
+## Endpoint: Find packages by ID
 
 ```http
-GET /nuget/Packages()?$filter=IsAbsoluteLatestVersion&$orderby=Id&$skip=4&$top=1 HTTP/1.1
+GET /nuget/FindPackagesById()?id='Kittens' HTTP/1.1
 Host: example.com
 ````
 
 ```powershell
 Invoke-WebRequest `
-  -Uri http://example.com/nuget/Packages()?$filter=IsAbsoluteLatestVersion&$orderby=Id&$skip=4&$top=2
+  -Uri http://example.com/nuget/FindPackagesById()?id='Kittens'
 ```
 
 > The above command returns an XML response like this:
 
 ```xml
 HTTP/1.1 200 OK
-Content-Length: 3724
+Content-Length: 3823
 Content-Type: application/atom+xml;type=feed;charset=utf-8
 Date: Sat, 18 Feb 2017 17:04:18 GMT
 
@@ -44,7 +44,7 @@ Date: Sat, 18 Feb 2017 17:04:18 GMT
       <d:DownloadCount m:type="Edm.Int32">27</d:DownloadCount>
       <d:IconUrl m:null="true" />
       <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
-      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
       <d:IsPrerelease m:type="Edm.Boolean">true</d:IsPrerelease>
       <d:Language m:null="true" />
       <d:PackageSize m:type="Edm.Int64">4103</d:PackageSize>
@@ -56,31 +56,31 @@ Date: Sat, 18 Feb 2017 17:04:18 GMT
       <d:MinClientVersion m:null="true" />
       <d:LicenseUrl m:null="true" />
     </m:properties>
-  </entry>
+  </entry>  
   <entry>
-    <id>http://example.com/nuget/Packages(Id='Puppies',Version='0.1.0')</id>
+    <id>http://example.com/nuget/Packages(Id='Kittens',Version='1.3.0')</id>
     <category term="V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
-    <link rel="edit" href="http://example.com/nuget/Packages(Id='Puppies',Version='0.1.0')" />
-    <link rel="self" href="http://example.com/nuget/Packages(Id='Puppies',Version='0.1.0')" />
-    <title type="text">Puppies</title>
+    <link rel="edit" href="http://example.com/nuget/Packages(Id='Kittens',Version='1.3.0')" />
+    <link rel="self" href="http://example.com/nuget/Packages(Id='Kittens',Version='1.3.0')" />
+    <title type="text">Kittens</title>
     <updated>2017-02-07T09:28:34Z</updated>
     <author>
       <name>joelverhagen</name>
     </author>
-    <content type="application/zip" src="http://example.com/nuget/package/Puppies/0.1.0" />
+    <content type="application/zip" src="http://example.com/nuget/package/Kittens/1.3.0" />
     <m:properties>
-      <d:Version>0.1.0</d:Version>
-      <d:NormalizedVersion>0.1.0</d:NormalizedVersion>
+      <d:Version>1.3.0</d:Version>
+      <d:NormalizedVersion>1.3.0</d:NormalizedVersion>
       <d:Copyright m:null="true" />
       <d:Dependencies />
-      <d:Description />
-      <d:DownloadCount m:type="Edm.Int32">2</d:DownloadCount>
+      <d:Description>Descriptions are important! Especially when a package releases a stable version.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">739</d:DownloadCount>
       <d:IconUrl m:null="true" />
       <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
       <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
       <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
       <d:Language m:null="true" />
-      <d:PackageSize m:type="Edm.Int64">8309</d:PackageSize>
+      <d:PackageSize m:type="Edm.Int64">4431</d:PackageSize>
       <d:ProjectUrl m:null="true" />
       <d:ReleaseNotes m:null="true" />
       <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
@@ -90,34 +90,44 @@ Date: Sat, 18 Feb 2017 17:04:18 GMT
       <d:LicenseUrl m:null="true" />
     </m:properties>
   </entry>
+  <link rel="next" href="http://example.com/nuget/FindPackagesById()?id=%27Kittens%27&$skip=2" />
 </feed>
 ```
 
-This endpoint is used to enumerate all packages available on the V2 package source.
+This endpoint is used to enumerate all versions of a given package ID
 
 ### HTTP Request
 
-`GET http://example.com/nuget/Packages`
+`GET http://example.com/nuget/FindPackagesById()?id='{package ID}'`
 
 ### Query Parameters
 
-Name     | Required | Description
--------- | -------- | -----------
-$filter  | false    | [OData $filter option](http://www.odata.org/documentation/odata-version-2-0/uri-conventions/#FilterSystemQueryOption) used to determine if a package should be in the result set.
-$orderby | false    | [OData $orderby option](http://www.odata.org/documentation/odata-version-2-0/uri-conventions/#OrderBySystemQueryOption) used to sort the result set.
-$skip    | false    | [OData $skip option](http://www.odata.org/documentation/odata-version-2-0/uri-conventions/#SkipSystemQueryOption) used for paging across the result set.
-$top     | false    | [OData $top option](http://www.odata.org/documentation/odata-version-2-0/uri-conventions/#TopSystemQueryOption) used for paging across the result set.
+Name | Required | Description
+---- | -------- | -----------
+id   | true     | Package ID to fetch all of the versions
+
+<aside>There is some inconsistency in support for the optional query parameters.</aside>
+
+Name     | Required | [Availability](#quirk-abbreviations)
+-------- | -------- | ------------------------------------
+$filter  | false    | MY, NG, NS2, NS3, VS
+$orderby | false    | MY, NG, NS2, NS3
+$select  | false    | MY, NG ([bug](https://github.com/NuGet/NuGetGallery/issues/3579)), NS2, NS3
+$skip    | false    | MY, NG, NS2, NS3
+$top     | false    | MY, NG, NS2, NS3
+
+Note the [NuGet.org has implemented filtering](https://github.com/NuGet/Home/wiki/Filter-OData-query-requests) on
+specific combinations of OData query parameters.
 
 ### Response
 
 The response body is an XML document containing a collection of package entities. There can be zero or more package
-entities.
+entities. If the package ID does not exist on the package source, an empty result set is returned.
 
-**TODO**: document when the URL to the next page is available.
-
-<aside>There is some inconsistency in the error status codes returned from different server implementations.</aside>
+For large result sets (packages that have many versions), a `<link rel="next" href="..." />` element can be returned.
+This should be followed to fetch the next set of results.
 
 Status Code     | Meaning
 --------------- | -------
 200 OK          | The result set has been returned
-400 Bad Request | The parameter values are invalid or the set of parameters is not supported
+404 Bad Request | The provided set of query parameters is not valid or not supported

@@ -14,7 +14,7 @@ Invoke-WebRequest `
 
 ```xml
 HTTP/1.1 200 OK
-Content-Length: 1906
+Content-Length: 1905
 Content-Type: application/atom+xml;type=feed;charset=utf-8
 Date: Sat, 18 Feb 2017 17:04:18 GMT
 
@@ -40,7 +40,7 @@ Date: Sat, 18 Feb 2017 17:04:18 GMT
     <d:IconUrl m:null="true" />
     <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
     <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
-    <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+    <d:IsPrerelease m:type="Edm.Boolean">true</d:IsPrerelease>
     <d:Language m:null="true" />
     <d:PackageSize m:type="Edm.Int64">4103</d:PackageSize>
     <d:ProjectUrl m:null="true" />
