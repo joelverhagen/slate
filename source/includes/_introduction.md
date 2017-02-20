@@ -5,15 +5,13 @@ This is unofficial documentation for both NuGet V2 and V3 HTTP package source pr
 A package source is either V2 or V3. V1 package sources are not covered here.
 
 Historically, the NuGet HTTP protocol has not been documented and has been an implementation detail between the official
-NuGet client (nuget.exe and NuGet inside of Visual Studio) and NuGet.org. As time went on, the HTTP protocol was closely
-inspected by parties outside of the NuGet team with the goal of providing alternative package sources to NuGet.org and
-different clients implementations.
+NuGet client (e.g. nuget.exe) and NuGet.org. As time went on, the HTTP protocol was closely inspected by parties outside
+of the NuGet team with the goal of providing alternate package sources and client implementations.
 
-Because the protocol was never clearly documented, there are often subtle quirks between different server
-implementations. This document is an attempt to clarify all of the HTTP endpoints currently available on major NuGet
-package sources.
+Because the protocol was never clearly documented, there are many subtle quirks between different server
+implementations. This document is an attempt to explain all of the HTTP endpoints available.
 
-**"Retro-specing" in the operative term!**
+**"Retro-specing" is the operative term!**
 
 ## Disclaimer
 
@@ -26,8 +24,8 @@ See the logo on this page? Yeah.
 ## Terminology
 
 A NuGet **package** is an archive containing some metadata and some assets. Typically these assets are .NET assemblies
-that another .NET project can consume. However, there are packages used for other things including but certainly not
-limited to:
+that a .NET project can consume (often through Visual Studio). However, there are packages used for other things
+including but certainly not limited to:
 
 - native dependencies (e.g. [SQLite](https://www.nuget.org/packages/SQLite/))
 - JavaScript (e.g. [jQuery](https://www.nuget.org/packages/jQuery/))
@@ -36,7 +34,7 @@ limited to:
 - deployment packages (via [Octopus Deploy](https://octopus.com/docs/packaging-applications))
 - And certainly many other creative things!
 
-However, NuGet packages have these attributes in common:
+However, NuGet packages have these attributes:
 
 - Having the .nupkg file extension
 - Being a Zip archive in disguise
