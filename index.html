@@ -126,15 +126,13 @@
 <p>A package source is either V2 or V3. V1 package sources are not covered here.</p>
 
 <p>Historically, the NuGet HTTP protocol has not been documented and has been an implementation detail between the official
-NuGet client (nuget.exe and NuGet inside of Visual Studio) and NuGet.org. As time went on, the HTTP protocol was closely
-inspected by parties outside of the NuGet team with the goal of providing alternative package sources to NuGet.org and
-different clients implementations.</p>
+NuGet client (e.g. nuget.exe) and NuGet.org. As time went on, the HTTP protocol was closely inspected by parties outside
+of the NuGet team with the goal of providing alternate package sources and client implementations.</p>
 
-<p>Because the protocol was never clearly documented, there are often subtle quirks between different server
-implementations. This document is an attempt to clarify all of the HTTP endpoints currently available on major NuGet
-package sources.</p>
+<p>Because the protocol was never clearly documented, there are many subtle quirks between different server
+implementations. This document is an attempt to explain all of the HTTP endpoints available.</p>
 
-<p><strong>&ldquo;Retro-specing&rdquo; in the operative term!</strong></p>
+<p><strong>&ldquo;Retro-specing&rdquo; is the operative term!</strong></p>
 
 <h2 id="disclaimer">Disclaimer</h2>
 
@@ -147,8 +145,8 @@ specification.</p>
 <h2 id="terminology">Terminology</h2>
 
 <p>A NuGet <strong>package</strong> is an archive containing some metadata and some assets. Typically these assets are .NET assemblies
-that another .NET project can consume. However, there are packages used for other things including but certainly not
-limited to:</p>
+that a .NET project can consume (often through Visual Studio). However, there are packages used for other things
+including but certainly not limited to:</p>
 
 <ul>
 <li>native dependencies (e.g. <a href="https://www.nuget.org/packages/SQLite/">SQLite</a>)</li>
@@ -159,7 +157,7 @@ limited to:</p>
 <li>And certainly many other creative things!</li>
 </ul>
 
-<p>However, NuGet packages have these attributes in common:</p>
+<p>However, NuGet packages have these attributes:</p>
 
 <ul>
 <li>Having the .nupkg file extension</li>
