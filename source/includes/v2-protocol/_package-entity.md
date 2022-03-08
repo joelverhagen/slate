@@ -19,7 +19,7 @@ Element                       | Description
 `<id>`, text content          | URL to [get metadata about a single package](#endpoint-get-a-single-package)
 `<content>`, `src` attribute  | URL to download the .nupkg
 `<summary>`, text content     | Summary **only when Summary is defined**
-`<author>`, `<name>` children | Authors, split into multiple values
+`<author>`, `<name>` children | Authors string
 
 The following properties vary from one server implementation to the next.
 
